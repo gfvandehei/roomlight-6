@@ -1,8 +1,8 @@
 #include <Adafruit_NeoPixel.h>
 
 
-#define PIN 3
-#define NUMPIX 30
+#define PIN 6
+#define NUMPIX 72
 
 
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUMPIX, PIN, NEO_GRB + NEO_KHZ800);
@@ -13,12 +13,12 @@ void setup() {
 }
 
 void loop() {
+  //set_work_light("yellow");
+  strip.setBrightness(25);
+  colorWipe(strip.Color(0, 255, 0), 100); // Red
+  colorWipe(strip.Color(0, 0, 255), 100); // Green
+  /*colorWipe(strip.Color(255, 255, 255), 100); // Blue
 
-  color_area(0,13,{0,0,255});
-  color_area(13,17,{255,0,0});
-  /*colorWipe(strip.Color(255, 0, 0), 50); // Red
-  colorWipe(strip.Color(0, 255, 0), 50); // Green
-  colorWipe(strip.Color(0, 0, 255), 50); // Blue
   theaterChase(strip.Color(127, 127, 127), 50); // White
   theaterChase(strip.Color(127, 0, 0), 50); // Red
   theaterChase(strip.Color(0, 0, 127), 50); // Blue
@@ -37,12 +37,25 @@ void clear_all(){
   strip.show();
 }
 
-void color_area(int start, int num, int color[3]={0,0,0}){
+void color_area(int start, int num, int r, int g, int b, int brightness){
   //colors a certain area of the strip
+  strip.setBrightness(brightness);
   for(int i=start;i<=start+num;i++){
-    strip.setPixelColor(i,color[0],color[1],color[2]);
+    strip.setPixelColor(i,r,g,b);
   }
   strip.show();
+}
+
+void set_work_light(char* ltype){
+  if(ltype=="white"){
+    color_area(0,NUMPIX,255,255,255,255);
+  }
+  else if(ltype=="yellow"){
+    color_area(0,NUMPIX,255,255,147,255);
+  }
+  else{
+    printf("invalid work light");
+  }
 }
 
 
