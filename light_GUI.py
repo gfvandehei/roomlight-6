@@ -3,6 +3,7 @@ import numpy as np
 import threading
 import serial
 from tkinter import *
+import serial
 
 
 class GUI(Frame):
@@ -105,5 +106,9 @@ class GUI(Frame):
 
 if __name__=="__main__":
     root=Tk()
+    try:
+        ser=serial.Serial("COM4",9600)
+    except:
+        print("could not find arduino on COM4, check connection")
     mainWindow=GUI(master=root)
     mainWindow.mainloop()
