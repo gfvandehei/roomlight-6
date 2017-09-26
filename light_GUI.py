@@ -1,7 +1,17 @@
+'''
+Author: Gabriel Vande Hei
+Purpose: create an easy interface with the arduino Uno, to abstract the
+         control of LED's using WS1812B LED controller. Look at arducode.Ino
+         for arduino control script
+'''
+
 from tkinter import *
+import serial
 
 class GUI(Frame):
-    
+    '''def colorCommand(self):
+        self.TimerIn.insert(INSERT, "COLOR")
+'''
     def createWidgets(self):
         self.lightdisplay=Canvas(height=30, width=300)
         self.redval=Spinbox(from_=0,to=255)#begin row 1
@@ -12,10 +22,10 @@ class GUI(Frame):
         self.TimerIn=Entry()#begin row 2
         self.TimerCheck=Button(text="Start")#row 3
         self.AudioVisualizer=Button(text="Audio Visualizer")#row 4
-        self.weather=Button(text="Audio Visualizer")
-        self.screen=Button(text="Audio Visualizer")
-        self.TBD1=Button(text="Audio Visualizer")
-        self.TBD2=Button(text="Audio Visualizer")
+        self.weather=Button(text="         ?          ")
+        self.screen=Button(text="    Weather    ")
+        self.TBD1=Button(text="         ?        ")
+        self.TBD2=Button(text="         ?        ")
 
         #pack row 1
         self.lightdisplay.grid(row=0)
@@ -44,6 +54,10 @@ class GUI(Frame):
 
 if __name__=="__main__":
     root=Tk()
+    try:
+        ser=serial.Serial("COM4",9600)
+    except:
+        print("could not find arduino on COM4, check connection")
     mainWindow=GUI(master=root)
     mainWindow.mainloop()
     root.destroy()
