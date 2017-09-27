@@ -68,20 +68,34 @@ void setup() {
 }
 
 int numpix=0;
+int integerValue=0;
+char incomingByte;
 void loop() {
   if(Serial.available()){
-    int incomingByte=Serial.read();
+    integerValue = 0;         // throw away previous integerValue
+    while(1) {            // force into a loop until 'n' is received
+      incomingByte = Serial.read();
+      if (incomingByte == '\n') break;   // exit the while(1), we're done receiving
+      if (incomingByte == -1) continue;  // if no characters are in the buffer read() returns -1
+      integerValue *= 10;  // shift left 1 decimal place
+      // convert ASCII to integer, add, and shift left 1 decimal place
+      integerValue = ((incomingByte - 48) + integerValue);
+    }
+    //Serial.println(integerValue);
+
+
+
+    /*int incomingByte=Serial.read();
     String instring;
-    
     instring+=char(incomingByte);
     //delay(100);
     numpix=instring.toInt();
-    Serial.print(numpix);
+    Serial.print(numpix);*/
     
-    for(int i=0;i<=numpix;i++){
+    for(int i=0;i<=integerValue;i++){
       strip.setPixelColor(i,ciroc[i][0],ciroc[i][1],ciroc[i][2]);
     }
-    for(int i=numpix;i<strip.numPixels();i++){
+    for(int i=integerValue;i<strip.numPixels();i++){
       strip.setPixelColor(i,0,0,0);
     }
     strip.show();

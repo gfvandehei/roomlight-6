@@ -27,8 +27,9 @@ class GUI(Frame):
             henlo=int(50*peak/2**14)
             henlo2=str(henlo)
             try:
-                self.ser.write(bytes(henlo2,"utf-8"))
-                print(self.ser.read())
+                #print("THIS IS IT",bytes(henlo2,"utf-8"))
+                self.ser.write(bytes(henlo2+'\n',"utf-8"))
+                #print(self.ser.read())
             except:
                 print("NUT")
             
