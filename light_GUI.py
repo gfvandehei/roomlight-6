@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import pyaudio
 import numpy as np
 import threading
@@ -53,6 +54,22 @@ class GUI(Frame):
         self.audio_exit=not self.audio_exit
         print(self.audio_exit)
     
+=======
+'''
+Author: Gabriel Vande Hei
+Purpose: create an easy interface with the arduino Uno, to abstract the
+         control of LED's using WS1812B LED controller. Look at arducode.Ino
+         for arduino control script
+'''
+
+from tkinter import *
+import serial
+
+class GUI(Frame):
+    '''def colorCommand(self):
+        self.TimerIn.insert(INSERT, "COLOR")
+'''
+>>>>>>> master
     def createWidgets(self):
 
         self.reset_button=Button(text="reset", command=self.reset_command)
@@ -64,11 +81,19 @@ class GUI(Frame):
         self.colorEnter=Button(text="Display")#end row 1
         self.TimerIn=Entry()#begin row 2
         self.TimerCheck=Button(text="Start")#row 3
+<<<<<<< HEAD
         self.AudioVisualizer=Button(text="Audio Visualizer",command=self.audio_command)#row 4
         self.weather=Button(text="Weather")
         self.screen=Button(text="Audio Visualizer")
         self.TBD1=Button(text="Audio Visualizer")
         self.TBD2=Button(text="Audio Visualizer")
+=======
+        self.AudioVisualizer=Button(text="Audio Visualizer")#row 4
+        self.weather=Button(text="         ?          ")
+        self.screen=Button(text="    Weather    ")
+        self.TBD1=Button(text="         ?        ")
+        self.TBD2=Button(text="         ?        ")
+>>>>>>> master
 
         #pack row 1
         self.lightdisplay.grid(row=0)
@@ -110,5 +135,9 @@ class GUI(Frame):
 
 if __name__=="__main__":
     root=Tk()
+    try:
+        ser=serial.Serial("COM4",9600)
+    except:
+        print("could not find arduino on COM4, check connection")
     mainWindow=GUI(master=root)
     mainWindow.mainloop()
