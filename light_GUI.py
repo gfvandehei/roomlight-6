@@ -24,11 +24,14 @@ class GUI(Frame):
             data = np.fromstring(stream.read(CHUNK),dtype=np.int16)
             peak=np.average(np.abs(data))*2
             bars="#"*int(50*peak/2**16)
+            henlo=int(50*peak/2**16)
+            henlo2=str(henlo)
             try:
-                self.ser.write(50*peak/2**16)
+                self.ser.write(bytes(henlo2,"utf-8"))
+                print(self.ser.read())
             except:
-                print()
-            print(bars)
+                print("NUT")
+            
 
         stream.stop_stream()
         stream.close()
@@ -94,7 +97,7 @@ class GUI(Frame):
                 print("could not connect (linux)")
         else:
             try:
-                self.ser=serial.Serial("COM4",9600)
+                self.ser=serial.Serial("COM5",9600)
             except:
                 print("could not connect (Windows)")
         
@@ -106,9 +109,5 @@ class GUI(Frame):
 
 if __name__=="__main__":
     root=Tk()
-    try:
-        ser=serial.Serial("COM4",9600)
-    except:
-        print("could not find arduino on COM4, check connection")
     mainWindow=GUI(master=root)
     mainWindow.mainloop()

@@ -9,6 +9,7 @@ Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUMPIX, PIN, NEO_GRB + NEO_KHZ800);
 int** ciroc;
 
 void setup() {
+  Serial.begin(9600);
   strip.begin();
   strip.show(); // Initialize all pixels to 'off'
   //allocate the ciroc array
@@ -67,31 +68,28 @@ void setup() {
 }
 
 void loop() {
-  //this area colors the ciroc without array
-  /*
-  color_area(0,5,255,255,255,255);
-  color_area(5,10,255,0,0,255);
-  color_area(15,5,0,0,255,255);
-  color_area(20,5,0,255,0,255);
-  color_area(25,10,255,165,0,255);
-  color_area(35,20,255,0,0,255);
-  color_area(55,5,255,215,0,255);
-  color_area(60,5,0,255,0,255);
-  color_area(65,5,0,0,255,255);*/
-  /*for (int j=0; j<10; j++) {  //do 10 cycles of chasing
-    for (int q=0; q < 3; q++) {
-      for (uint16_t i=0; i < strip.numPixels(); i=i+3) {
-        strip.setPixelColor(i+q, ciroc[i+q][0],ciroc[i+q][1],ciroc[i+q][2]);    //turn every third pixel on
-      }
-      strip.show();
-
-      delay(50);
-
-      for (uint16_t i=0; i < strip.numPixels(); i=i+3) {
-        strip.setPixelColor(i+q, 0);        //turn every third pixel off
-      }
+  if(Serial.available()){
+    char incomingByte=Serial.read();
+    delay(100);
+    Serial.print(incomingstring);
+    /*for(int i=0;i<=int(incomingByte);i++){
+      strip.setPixelColor(i,ciroc[i][0],ciroc[i][1],ciroc[i][2]);
     }
-  }*/
+    strip.show();*/
+  }
+
+}
+
+// Fill the dots one after the other with a color
+void clear_all(){
+  //makes the entire strip display black
+  for(uint16_t i=0;i<strip.numPixels();i++){
+    strip.setPixelColor(i,0,0,0);
+  }
+  strip.show();
+}
+
+void bounce(){
   for(int i=0;i<strip.numPixels()-10;i++){
     for(int u=i;u<i+10;u++){
       strip.setPixelColor(u,ciroc[u][0],ciroc[u][1],ciroc[u][2]);
@@ -112,15 +110,6 @@ void loop() {
     delay(10);
     strip.show();
   }
-}
-
-// Fill the dots one after the other with a color
-void clear_all(){
-  //makes the entire strip display black
-  for(uint16_t i=0;i<strip.numPixels();i++){
-    strip.setPixelColor(i,0,0,0);
-  }
-  strip.show();
 }
 
 void color_area(int start, int num, int r, int g, int b, int brightness){
