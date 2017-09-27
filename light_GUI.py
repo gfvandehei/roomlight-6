@@ -24,7 +24,7 @@ class GUI(Frame):
             data = np.fromstring(stream.read(CHUNK),dtype=np.int16)
             peak=np.average(np.abs(data))*2
             bars="#"*int(50*peak/2**16)
-            henlo=int(50*peak/2**16)
+            henlo=int(50*peak/2**14)
             henlo2=str(henlo)
             try:
                 self.ser.write(bytes(henlo2,"utf-8"))
@@ -97,7 +97,7 @@ class GUI(Frame):
                 print("could not connect (linux)")
         else:
             try:
-                self.ser=serial.Serial("COM5",9600)
+                self.ser=serial.Serial("COM4",9600)
             except:
                 print("could not connect (Windows)")
         

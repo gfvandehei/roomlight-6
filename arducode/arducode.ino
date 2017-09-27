@@ -67,15 +67,24 @@ void setup() {
 
 }
 
+int numpix=0;
 void loop() {
   if(Serial.available()){
-    char incomingByte=Serial.read();
-    delay(100);
-    Serial.print(incomingstring);
-    /*for(int i=0;i<=int(incomingByte);i++){
+    int incomingByte=Serial.read();
+    String instring;
+    
+    instring+=char(incomingByte);
+    //delay(100);
+    numpix=instring.toInt();
+    Serial.print(numpix);
+    
+    for(int i=0;i<=numpix;i++){
       strip.setPixelColor(i,ciroc[i][0],ciroc[i][1],ciroc[i][2]);
     }
-    strip.show();*/
+    for(int i=numpix;i<strip.numPixels();i++){
+      strip.setPixelColor(i,0,0,0);
+    }
+    strip.show();
   }
 
 }
