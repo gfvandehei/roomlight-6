@@ -40,7 +40,7 @@ class GUI(Frame):
 
     def audio_command(self):
         '''
-        this function is in charge of controling the audio visualizer thread
+        this function is in charge of controlling the audio visualizer thread
         should be called by clicking the audio visualizer button
         '''
         self.visualthread=threading.Thread(target=self.audio_thread)
@@ -98,7 +98,7 @@ class GUI(Frame):
                 print("could not connect (linux)")
         else:
             try:
-                self.ser=serial.Serial("COM4",9600)
+                self.ser=serial.Serial("COM5",9600)
             except:
                 print("could not connect (Windows)")
         
@@ -111,8 +111,8 @@ class GUI(Frame):
 if __name__=="__main__":
     root=Tk()
     try:
-        ser=serial.Serial("COM4",9600)
+        ser=serial.Serial("COM5",9600)
     except:
-        print("could not find arduino on COM4, check connection")
+        print("could not find arduino on COM5, check connection")
     mainWindow=GUI(master=root)
     mainWindow.mainloop()

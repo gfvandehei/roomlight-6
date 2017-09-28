@@ -63,15 +63,32 @@ void setup() {
     ciroc[i][1]=0;
     ciroc[i][2]=255;
   }
-  
-
 }
 
 int numpix=0;
 int integerValue=0;
 char incomingByte;
+void center_vis(int integerValue, Adafruit_NeoPixel strip, int** ciroc) {        
+    for(int i=(strip.numPixels())/2; 
+                  i>=((strip.numPixels())/2)-(integerValue/2) && i>=0; i--){ //select lights from center towards pos 0
+      strip.setPixelColor(i,ciroc[i][0],ciroc[i][1],ciroc[i][2]);
+    }
+    for(int i=0;i<((strip.numPixels())/2)-(integerValue/2);i++){ //set remaining lights from left end to black
+      strip.setPixelColor(i,0,0,0);
+    }
+    for(int i=((strip.numPixels())/2)+1; 
+            i<=((strip.numPixels())/2)+(integerValue/2) && i<strip.numPixels(); i++){ //select lights from center towards numPixels()
+      strip.setPixelColor(i,ciroc[i][0],ciroc[i][1],ciroc[i][2]);
+    }
+    for(int i=strip.numPixels();i>((strip.numPixels())/2)+(integerValue/2);i--){ //set lights from numPixels() end to black
+      strip.setPixelColor(i,0,0,0);
+    }
+    strip.show();
+}
+
+int gabe = 1;
 void loop() {
-<<<<<<< HEAD
+//<<<<<<< HEAD
   if(Serial.available()){
     integerValue = 0;         // throw away previous integerValue
     while(1) {            // force into a loop until 'n' is received
@@ -82,14 +99,18 @@ void loop() {
       // convert ASCII to integer, add, and shift left 1 decimal place
       integerValue = ((incomingByte - 48) + integerValue);
     }
-        
-    for(int i=0;i<=integerValue;i++){
-      strip.setPixelColor(i,ciroc[i][0],ciroc[i][1],ciroc[i][2]);
+    if(gabe == 1)
+    {
+      for(int i=0;i<=integerValue;i++){
+        strip.setPixelColor(i,ciroc[i][0],ciroc[i][1],ciroc[i][2]);
+      }
+      for(int i=integerValue;i<strip.numPixels();i++){
+        strip.setPixelColor(i,0,0,0);
+      }
+      strip.show();
     }
-    for(int i=integerValue;i<strip.numPixels();i++){
-      strip.setPixelColor(i,0,0,0);
-    }
-    strip.show();
+    else
+      {center_vis(integerValue, strip, ciroc);}
   }
   
 }
