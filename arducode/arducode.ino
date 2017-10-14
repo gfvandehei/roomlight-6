@@ -78,8 +78,8 @@ void setup() {
 
 void loop() {
   int input=SerialRead();
-  JD_funct(1);
-  JD_funct(0);
+  gabesfunct(1,input);
+  JD_funct(0,input);
 
 }
 int SerialRead(){ //this function works
@@ -97,7 +97,7 @@ int SerialRead(){ //this function works
   }   
 }
 
-void JD_funct(int selected_strip){
+void JD_funct(int selected_strip, int integerValue){
   int center_val =strips[selected_strip].numPixels()/2;  
   int move =map(integerValue/2, 1, 70, 1, strips[selected_strip].numPixels());// integerValue/2;
   if(selected_strip==0){ 
@@ -132,14 +132,26 @@ void JD_funct(int selected_strip){
   }
 }
 
-void gabesfunct(){
-  for(int i=0;i<=integerValue;i++){
-    strip.setPixelColor(i,ciroc[i][0],ciroc[i][1],ciroc[i][2]);
+void gabesfunct(int selected_strip, int integerValue){
+  integerValue=map(integerValue, 1, 70, 1, strips[selected_strip].numPixels());
+  if(selected_strip==0){
+    for(int i=0;i<=integerValue;i++){
+      strips[selected_strip].setPixelColor(i,ciroc[i][0],ciroc[i][1],ciroc[i][2]);
+    }
+    for(int i=integerValue;i<strips[selected_strip].numPixels();i++){
+      strips[selected_strip].setPixelColor(i,0,0,0);
+    }
+    strips[selected_strip].show();
   }
-  for(int i=integerValue;i<strip.numPixels();i++){
-    strip.setPixelColor(i,0,0,0);
+  else{
+    for(int i=0;i<=integerValue;i++){
+      strips[selected_strip].setPixelColor(i,255,255,0);
+    }
+    for(int i=integerValue;i<strips[selected_strip].numPixels();i++){
+      strips[selected_strip].setPixelColor(i,0,0,255);
+    }
+    strips[selected_strip].show();
   }
-  strip.show();
 }
 // Fill the dots one after the other with a color
 void clear_all(){
