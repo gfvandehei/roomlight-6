@@ -8,8 +8,9 @@
 #define NUMSTRIPS 2
 
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUMPIX, PIN, NEO_GRB + NEO_KHZ800); //initialize behind the bar lights
-Adafruit_NeoPixel strip2 = Adafruit_NeoPixel(NUMPIX2, PIN2, NEO_GRB + NEO_KHZ800); // initialize under bed light
+Adafruit_NeoPixel strip2 = Adafruit_NeoPixel(NUMPIX2, PIN_2, NEO_GRB + NEO_KHZ800); // initialize under bed light
 Adafruit_NeoPixel strips[NUMSTRIPS]={strip,strip2}; //an array which contains both of the strips
+int striplen[NUMSTRIPS]={NUMPIX,NUMPIX2};
 int** ciroc; //an array to contain the light pattern for the behind bar lights
 int numpix=0;
 int integerValue=0;
@@ -18,7 +19,7 @@ int gabe = 0; //sets if JD or gabes stuff should be used
 
 void setup() {
   Serial.begin(9600);
-  for(uint8_t i=0; i<NUMSTRIPS; i++){ //loop begins and erases all strips
+  for(int i=0; i<NUMSTRIPS; i++){ //loop begins and erases all strips
     strips[i].begin(); //starts strip
     strips[i].show(); //sets strip to blank
   }
@@ -76,7 +77,12 @@ void setup() {
 }
 
 void loop() {
-//<<<<<<< HEAD
+  int input=SerialRead();
+  JD_funct(1);
+  JD_funct(0);
+
+}
+int SerialRead(){ //this function works
   if(Serial.available()){
     integerValue = 0;         // throw away previous integerValue
     while(1) {            // force into a loop until 'n' is received
@@ -87,36 +93,54 @@ void loop() {
       // convert ASCII to integer, add, and shift left 1 decimal place
       integerValue = ((incomingByte - 48) + integerValue);
     }
-    if(gabe == 1)
-    {
-      for(int i=0;i<=integerValue;i++){
-        strip.setPixelColor(i,ciroc[i][0],ciroc[i][1],ciroc[i][2]);
-      }
-      for(int i=integerValue;i<strip.numPixels();i++){
-        strip.setPixelColor(i,0,0,0);
-      }
-      strip.show();
+    return integerValue;
+  }   
+}
+
+void JD_funct(int selected_strip){
+  int center_val =strips[selected_strip].numPixels()/2;  
+  int move =map(integerValue/2, 1, 70, 1, strips[selected_strip].numPixels());// integerValue/2;
+  if(selected_strip==0){ 
+    for(int i=center_val; i >= center_val-move && i>0; i--){ //select lights from center towards pos 0
+      strips[selected_strip].setPixelColor(i,ciroc[i][0],ciroc[i][1],ciroc[i][2]);
     }
-    else{
-        int center_val = 36;  
-        int move = integerValue/2; 
-          for(int i=center_val; i >= center_val-move && i>0; i--){ //select lights from center towards pos 0
-            strip.setPixelColor(i,ciroc[i][0],ciroc[i][1],ciroc[i][2]);
-          }
-          for(int i=0; i<center_val-move; i++){ //set remaining lights from left end to black
-            strip.setPixelColor(i,0,0,0);
-          }
-          for(int i=center_val; i<= (center_val+move) && i<strip.numPixels(); i++){ //select lights from center towards numPixels()
-            strip.setPixelColor(i,ciroc[i][0],ciroc[i][1],ciroc[i][2]);
-          }
-          for(int i=center_val + move; i<strip.numPixels(); i++){ //set lights up to numPixels() to black
-            strip.setPixelColor(i,0,0,0);
-          }
-          strip.show();
-        }
+    for(int i=0; i<center_val-move; i++){ //set remaining lights from left end to black
+      strips[selected_strip].setPixelColor(i,0,0,0);
+    }
+    for(int i=center_val; i<= (center_val+move) && i<strips[selected_strip].numPixels(); i++){ //select lights from center towards numPixels()
+      strips[selected_strip].setPixelColor(i,ciroc[i][0],ciroc[i][1],ciroc[i][2]);
+    }
+    for(int i=center_val + move; i<strips[selected_strip].numPixels(); i++){ //set lights up to numPixels() to black
+      strips[selected_strip].setPixelColor(i,0,0,0);
+    }
+    strips[selected_strip].show();
+  }
+  else{
+    for(int i=center_val; i >= center_val-move && i>0; i--){ //select lights from center towards pos 0
+      strips[selected_strip].setPixelColor(i,255,0,0);
+    }
+    for(int i=0; i<center_val-move; i++){ //set remaining lights from left end to black
+      strips[selected_strip].setPixelColor(i,0,0,0);
+    }
+    for(int i=center_val; i<= (center_val+move) && i<strips[selected_strip].numPixels(); i++){ //select lights from center towards numPixels()
+      strips[selected_strip].setPixelColor(i,0,0,255);
+    }
+    for(int i=center_val + move; i<strips[selected_strip].numPixels(); i++){ //set lights up to numPixels() to black
+      strips[selected_strip].setPixelColor(i,0,0,0);
+    }
+    strips[selected_strip].show();
   }
 }
 
+void gabesfunct(){
+  for(int i=0;i<=integerValue;i++){
+    strip.setPixelColor(i,ciroc[i][0],ciroc[i][1],ciroc[i][2]);
+  }
+  for(int i=integerValue;i<strip.numPixels();i++){
+    strip.setPixelColor(i,0,0,0);
+  }
+  strip.show();
+}
 // Fill the dots one after the other with a color
 void clear_all(){
   //makes the entire strip display black
