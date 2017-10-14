@@ -2,16 +2,26 @@
 
 
 #define PIN 9
+#define PIN_2 10
 #define NUMPIX 72
+#define NUMPIX2 130
+#define NUMSTRIPS 2
 
-
-Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUMPIX, PIN, NEO_GRB + NEO_KHZ800);
-int** ciroc;
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUMPIX, PIN, NEO_GRB + NEO_KHZ800); //initialize behind the bar lights
+Adafruit_NeoPixel strip2 = Adafruit_NeoPixel(NUMPIX2, PIN2, NEO_GRB + NEO_KHZ800); // initialize under bed light
+Adafruit_NeoPixel strips[NUMSTRIPS]={strip,strip2}; //an array which contains both of the strips
+int** ciroc; //an array to contain the light pattern for the behind bar lights
+int numpix=0;
+int integerValue=0;
+char incomingByte;
+int gabe = 0; //sets if JD or gabes stuff should be used 
 
 void setup() {
   Serial.begin(9600);
-  strip.begin();
-  strip.show(); // Initialize all pixels to 'off'
+  for(uint8_t i=0; i<NUMSTRIPS; i++){ //loop begins and erases all strips
+    strips[i].begin(); //starts strip
+    strips[i].show(); //sets strip to blank
+  }
   //allocate the ciroc array
   ciroc=(int**)malloc(72*sizeof(int*));
   for(int i=0;i<72;i++){
@@ -65,11 +75,6 @@ void setup() {
   }
 }
 
-int numpix=0;
-int integerValue=0;
-char incomingByte;
-
-int gabe = 0;
 void loop() {
 //<<<<<<< HEAD
   if(Serial.available()){
