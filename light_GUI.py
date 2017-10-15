@@ -38,11 +38,16 @@ class GUI(Frame):
         stream.close()
         p.terminate()
 
-    def audio_command(self):
+    def audio_command_1(self):
         '''
         this function is in charge of controlling the audio visualizer thread
         should be called by clicking the audio visualizer button
         '''
+        self.ser.write(bytes('a',"utf-8"))
+        self.visualthread=threading.Thread(target=self.audio_thread)
+        self.visualthread.start()
+    def audio_command_2(self):
+        self.ser.write(bytes('b',"utf-8"))
         self.visualthread=threading.Thread(target=self.audio_thread)
         self.visualthread.start()
 
@@ -50,6 +55,7 @@ class GUI(Frame):
         '''
         this is the function for the reset button, resets the 
         '''
+        self.ser.write(bytes('c',"utf-8"))
         self.audio_exit=not self.audio_exit
         print(self.audio_exit)
     
@@ -64,8 +70,8 @@ class GUI(Frame):
         self.colorEnter=Button(text="Display")#end row 1
         self.TimerIn=Entry()#begin row 2
         self.TimerCheck=Button(text="Start")#row 3
-        self.AudioVisualizer=Button(text="Audio Visualizer",command=self.audio_command)#row 4
-        self.weather=Button(text="Weather")
+        self.AudioVisualizer=Button(text="Audio Visualizer A",command=self.audio_command_1)#row 4
+        self.weather=Button(text="Audio Visualizer B",command=self.audio_command_2)
         self.screen=Button(text="Audio Visualizer")
         self.TBD1=Button(text="Audio Visualizer")
         self.TBD2=Button(text="Audio Visualizer")

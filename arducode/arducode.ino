@@ -15,7 +15,7 @@ int** ciroc; //an array to contain the light pattern for the behind bar lights
 int numpix=0;
 int integerValue=0;
 char incomingByte;
-char incomingchar="";
+char incomingchar;
 int gabe = 0; //sets if JD or gabes stuff should be used 
 
 void setup() {
@@ -81,7 +81,16 @@ void loop() {
   int input=SerialRead();
   if(incomingchar=='a'){
     gabesfunct(1,input);
+    gabesfunct(0,input);
+  }
+  else if(incomingchar=='b'){
+    JD_funct(1,input);
     JD_funct(0,input);
+  }
+  else{
+    colorWipe(strip.Color(0,0,255),10,1);
+    colorWipe(strip.Color(0,255,0),10,1);
+    colorWipe(strip.Color(255,0,0),10,1);
   }
 }
 int SerialRead(){ //this function works
@@ -89,8 +98,7 @@ int SerialRead(){ //this function works
     integerValue = 0;         // throw away previous integerValue
     while(1) {            // force into a loop until 'n' is received
       incomingByte = Serial.read();
-      if(incomingByte.isAlpha() && incomingByte!='\n'){
-        incomingchar="";
+      if(isAlpha(incomingByte) && incomingByte!='\n'){
         incomingchar=incomingByte;
       }
       else{
@@ -216,10 +224,10 @@ void set_work_light(char* ltype){
 
 
 //start of original functions
-void colorWipe(uint32_t c, uint8_t wait) {
-  for(uint16_t i=0; i<strip.numPixels(); i++) {
-    strip.setPixelColor(i, c);
-    strip.show();
+void colorWipe(uint32_t c, uint8_t wait, int strip_num) {
+  for(uint16_t i=0; i<strips[strip_num].numPixels(); i++) {
+    strips[strip_num].setPixelColor(i, c);
+    strips[strip_num].show();
     delay(wait);
   }
 }
