@@ -15,6 +15,7 @@ int** ciroc; //an array to contain the light pattern for the behind bar lights
 int numpix=0;
 int integerValue=0;
 char incomingByte;
+char incomingchar="";
 int gabe = 0; //sets if JD or gabes stuff should be used 
 
 void setup() {
@@ -23,7 +24,7 @@ void setup() {
     strips[i].begin(); //starts strip
     strips[i].show(); //sets strip to blank
   }
-  //allocate the ciroc array
+  //allocate the behind bar array
   ciroc=(int**)malloc(72*sizeof(int*));
   for(int i=0;i<72;i++){
     ciroc[i]=(int*)malloc(3*sizeof(int));
@@ -78,20 +79,27 @@ void setup() {
 
 void loop() {
   int input=SerialRead();
-  gabesfunct(1,input);
-  JD_funct(0,input);
-
+  if(incomingchar=='a'){
+    gabesfunct(1,input);
+    JD_funct(0,input);
+  }
 }
 int SerialRead(){ //this function works
   if(Serial.available()){
     integerValue = 0;         // throw away previous integerValue
     while(1) {            // force into a loop until 'n' is received
       incomingByte = Serial.read();
-      if (incomingByte == '\n') break;   // exit the while(1), we're done receiving
-      if (incomingByte == -1) continue;  // if no characters are in the buffer read() returns -1
-      integerValue *= 10;  // shift left 1 decimal place
-      // convert ASCII to integer, add, and shift left 1 decimal place
-      integerValue = ((incomingByte - 48) + integerValue);
+      if(incomingByte.isAlpha() && incomingByte!='\n'){
+        incomingchar="";
+        incomingchar=incomingByte;
+      }
+      else{
+        if (incomingByte == '\n') break;   // exit the while(1), we're done receiving
+        if (incomingByte == -1) continue;  // if no characters are in the buffer read() returns -1
+        integerValue *= 10;  // shift left 1 decimal place
+        // convert ASCII to integer, add, and shift left 1 decimal place
+        integerValue = ((incomingByte - 48) + integerValue);
+      }
     }
     return integerValue;
   }   
