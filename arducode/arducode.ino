@@ -88,9 +88,8 @@ void loop() {
     JD_funct(0,input);
   }
   else{
-    colorWipe(strip.Color(0,0,255),10,1);
-    colorWipe(strip.Color(0,255,0),10,1);
-    colorWipe(strip.Color(255,0,0),10,1);
+    clear_all(0);
+    clear_all(1);
   }
 }
 int SerialRead(){ //this function works
@@ -170,52 +169,52 @@ void gabesfunct(int selected_strip, int integerValue){
   }
 }
 // Fill the dots one after the other with a color
-void clear_all(){
+void clear_all(int numstrip){
   //makes the entire strip display black
-  for(uint16_t i=0;i<strip.numPixels();i++){
-    strip.setPixelColor(i,0,0,0);
+  for(uint16_t i=0;i<strips[numstrip].numPixels();i++){
+    strips[numstrip].setPixelColor(i,0,0,0);
   }
-  strip.show();
+  strips[numstrip].show();
 }
 
-void bounce(){
-  for(int i=0;i<strip.numPixels()-10;i++){
+void bounce(int numstrip){
+  for(int i=0;i<strips[numstrip].numPixels()-10;i++){
     for(int u=i;u<i+10;u++){
-      strip.setPixelColor(u,ciroc[u][0],ciroc[u][1],ciroc[u][2]);
+      strips[numstrip].setPixelColor(u,ciroc[u][0],ciroc[u][1],ciroc[u][2]);
     }
     for(int u=0;u<i;u++){
-      strip.setPixelColor(u,0,0,0);
+      strips[numstrip].setPixelColor(u,0,0,0);
     }
     delay(10);
-    strip.show();
+    strips[numstrip].show();
   }
-  for(int i=strip.numPixels()-10;i>=0;i--){
+  for(int i=strips[numstrip].numPixels()-10;i>=0;i--){
     for(int u=i;u<i+10;u++){
-      strip.setPixelColor(u,ciroc[u][0],ciroc[u][1],ciroc[u][2]);
+      strips[numstrip].setPixelColor(u,ciroc[u][0],ciroc[u][1],ciroc[u][2]);
     }
-    for(int u=strip.numPixels();u>i+10;u--){
-      strip.setPixelColor(u,0,0,0);
+    for(int u=strips[numstrip].numPixels();u>i+10;u--){
+      strips[numstrip].setPixelColor(u,0,0,0);
     }
     delay(10);
-    strip.show();
+    strips[numstrip].show();
   }
 }
 
-void color_area(int start, int num, int r, int g, int b, int brightness){
+void color_area(int numstrip,int start, int num, int r, int g, int b, int brightness){
   //colors a certain area of the strip
-  strip.setBrightness(brightness);
+  strips[numstrip].setBrightness(brightness);
   for(int i=start;i<=start+num;i++){
-    strip.setPixelColor(i,r,g,b);
+    strips[numstrip].setPixelColor(i,r,g,b);
   }
-  strip.show();
+  strips[numstrip].show();
 }
 
-void set_work_light(char* ltype){
+void set_work_light(char* ltype, int strip_num){
   if(ltype=="white"){
-    color_area(0,NUMPIX,255,255,255,255);
+    color_area(strip_num,0,NUMPIX,255,255,255,255);
   }
   else if(ltype=="yellow"){
-    color_area(0,NUMPIX,255,255,147,255);
+    color_area(strip_num,0,NUMPIX,255,255,147,255);
   }
   else{
     printf("invalid work light");
@@ -226,6 +225,9 @@ void set_work_light(char* ltype){
 //start of original functions
 void colorWipe(uint32_t c, uint8_t wait, int strip_num) {
   for(uint16_t i=0; i<strips[strip_num].numPixels(); i++) {
+    if(incomingchar && incomingchar!='c'){
+      break;
+    }
     strips[strip_num].setPixelColor(i, c);
     strips[strip_num].show();
     delay(wait);
