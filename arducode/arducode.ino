@@ -87,12 +87,54 @@ void loop() {
     JD_funct(1,input);
     JD_funct(0,input);
   }
+  else if(incomingchar=='c'){
+    weatherfunct(input,1);
+  }
   else{
-    colorWipe(strip.Color(0,0,255),10,1);
-    colorWipe(strip.Color(0,255,0),10,1);
-    colorWipe(strip.Color(255,0,0),10,1);
+    clear_all();
+    /*colorWipe(strip2.Color(0,0,255),10,1);
+    colorWipe(strip2.Color(0,255,0),10,1);
+    colorWipe(strip2.Color(255,0,0),10,1);*/
   }
 }
+
+void sunnylight(int stripnum){
+  int randomnum=random(strips[stripnum].numPixels()-5);
+  for(int i=0;i<5;i++){
+    strips[stripnum].setPixelColor(randomnum+i,255,255,255);
+  }
+  strips[stripnum].show();
+  delay(20);
+}
+
+void weatherfunct(int weathercode, int stripnum){
+  if(weathercode==1){
+    while(!Serial.available()){
+      sunnylight(stripnum);
+      colorWipe(strip.Color(0,0,211),10,stripnum);
+    }
+  }
+  else if(weathercode==2){
+    colorWipe(strip.Color(211,211,211),10,stripnum);
+  }
+  else if(weathercode==3){
+    colorWipe(strip.Color(255,255,255),10,stripnum);
+  }
+  else if(weathercode==4){
+    colorWipe(strip.Color(211,211,211),10,stripnum);
+  }
+  else if(weathercode==5){
+    colorWipe(strip.Color(211,211,211),10,stripnum);
+  }
+  else if(weathercode==6){
+    colorWipe(strip.Color(211,211,211),10,stripnum);
+  }
+  else if(weathercode==7){
+    colorWipe(strip.Color(211,0,0),10,stripnum);
+    colorWipe(strip.Color(0,0,0),10,stripnum);
+  }
+}
+
 int SerialRead(){ //this function works
   if(Serial.available()){
     integerValue = 0;         // throw away previous integerValue
@@ -172,10 +214,10 @@ void gabesfunct(int selected_strip, int integerValue){
 // Fill the dots one after the other with a color
 void clear_all(){
   //makes the entire strip display black
-  for(uint16_t i=0;i<strip.numPixels();i++){
-    strip.setPixelColor(i,0,0,0);
+  for(uint16_t i=0;i<strip2.numPixels();i++){
+    strip2.setPixelColor(i,0,0,0);
   }
-  strip.show();
+  strip2.show();
 }
 
 void bounce(){
@@ -226,6 +268,9 @@ void set_work_light(char* ltype){
 //start of original functions
 void colorWipe(uint32_t c, uint8_t wait, int strip_num) {
   for(uint16_t i=0; i<strips[strip_num].numPixels(); i++) {
+    if(Serial.available()){
+      break;
+    }
     strips[strip_num].setPixelColor(i, c);
     strips[strip_num].show();
     delay(wait);
