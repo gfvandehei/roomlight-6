@@ -87,11 +87,52 @@ void loop() {
     JD_funct(1,input);
     JD_funct(0,input);
   }
+  else if(incomingchar=='c'){
+    weatherfunct(input,1);
+  }
   else{
     clear_all(0);
     clear_all(1);
   }
 }
+
+void sunnylight(int stripnum){
+  int randomnum=random(strips[stripnum].numPixels()-5);
+  for(int i=0;i<5;i++){
+    strips[stripnum].setPixelColor(randomnum+i,255,255,255);
+  }
+  strips[stripnum].show();
+  delay(20);
+}
+
+void weatherfunct(int weathercode, int stripnum){
+  if(weathercode==1){
+    while(!Serial.available()){
+      sunnylight(stripnum);
+      colorWipe(strip.Color(0,0,211),10,stripnum);
+    }
+  }
+  else if(weathercode==2){
+    colorWipe(strip.Color(211,211,211),10,stripnum);
+  }
+  else if(weathercode==3){
+    colorWipe(strip.Color(255,255,255),10,stripnum);
+  }
+  else if(weathercode==4){
+    colorWipe(strip.Color(211,211,211),10,stripnum);
+  }
+  else if(weathercode==5){
+    colorWipe(strip.Color(211,211,211),10,stripnum);
+  }
+  else if(weathercode==6){
+    colorWipe(strip.Color(211,211,211),10,stripnum);
+  }
+  else if(weathercode==7){
+    colorWipe(strip.Color(211,0,0),10,stripnum);
+    colorWipe(strip.Color(0,0,0),10,stripnum);
+  }
+}
+
 int SerialRead(){ //this function works
   if(Serial.available()){
     integerValue = 0;         // throw away previous integerValue
@@ -225,7 +266,7 @@ void set_work_light(char* ltype, int strip_num){
 //start of original functions
 void colorWipe(uint32_t c, uint8_t wait, int strip_num) {
   for(uint16_t i=0; i<strips[strip_num].numPixels(); i++) {
-    if(incomingchar && incomingchar!='c'){
+    if(Serial.available()){
       break;
     }
     strips[strip_num].setPixelColor(i, c);
