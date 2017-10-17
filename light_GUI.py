@@ -4,6 +4,7 @@ import threading
 import serial
 from tkinter import *
 import serial
+import pyowm
 
 
 class GUI(Frame):
@@ -67,11 +68,30 @@ class GUI(Frame):
         self.ser.write(bytes('e',"utf-8"))
         self.visualthread=threading.Thread(target=self.audio_thread)
         self.visualthread.start()
+    def weather_command(self):
+        self.ser.write(bytes('c',"utf-8"))
+        w=self.forcast.get_weather()
+        status=w.get_status()
+        #clear=1, clouds=2, Snow=3, rain=4, thunderstorm=5, Drizzle=6, extreme=7
+        if(status=="Clear"):
+            self.ser.write(bytes(str(1)+'\n',"utf-8"))
+        if(status=="Clouds"):
+            self.ser.write(bytes(str(2)+'\n',"utf-8"))
+        if(status=="Snow"):
+            self.ser.write(bytes(str(3)+'\n',"utf-8"))
+        if(status=="Rain"):
+            self.ser.write(bytes(str(4)+'\n',"utf-8"))
+        if(status=="Thunderstorm"):
+            self.ser.write(bytes(str(5)+'\n',"utf-8"))
+        if(status=="Drizzle"):
+            self.ser.write(bytes(str(6)+'\n',"utf-8"))
+        if(status=="Extreme"):
+            self.ser.write(bytes(str(7)+'\n',"utf-8"))
     def reset_command(self):
         '''
         this is the function for the reset button, resets the 
         '''
-        self.ser.write(bytes('c',"utf-8"))
+        self.ser.write(bytes('z',"utf-8"))
         self.audio_exit=not self.audio_exit
         print(self.audio_exit)
     
@@ -88,7 +108,8 @@ class GUI(Frame):
         self.TimerCheck=Button(text="Start")#row 3
 
         self.AudioVisualizer=Button(text="Audio Visualizer A",command=self.audio_command_1)#row 4
-        self.weather=Button(text="Audio Visualizer B",command=self.audio_command_2)
+        self.weather=Button(text="Weather",command=self.weather_command)
+        self.AudioVisualizer2=Button(text="Audio Visualizer B",command=self.audio_command_2)
         self.RainbowAudio=Button(text="Rainbow Audio",command=self.audio_command_3)
         self.AudioVisualizerSides=Button(text="Audio Visualizer Sides",command=self.audio_command_4)
         self.Rainbow=Button(text="Rainbow",command=self.rainbow_command)
@@ -112,13 +133,16 @@ class GUI(Frame):
         self.RainbowAudio.grid(row=5,column=3)
         self.AudioVisualizerSides.grid(row=6,column=2)
         self.TBD1.grid(row=6,column=3)
-
+        self.AudioVisualizer2.grid(row=6,column=4)
         #end pack
 
     def __init__(self, master=None):
         self.audio_exit=False
         Frame.__init__(self, master)
         self.LEDNUM=0
+        self.owm=pyowm.OWM("3bfa77875cd0a2c86b4a809e701a2833")
+        #self.forcast=self.owm.weather_at_coords(42.73, -73.69)
+        self.forcast=self.owm.weather_at_place("Houston, US")
         if(sys.platform=="linux"):
             try:
                 self.ser=serial.Serial("/dev/tty.usbserial",9600)
@@ -126,7 +150,7 @@ class GUI(Frame):
                 print("could not connect (linux)")
         else:
             try:
-                self.ser=serial.Serial("COM5",9600)
+                self.ser=serial.Serial("COM4",9600)
             except:
                 print("could not connect (Windows)")
         
