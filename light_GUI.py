@@ -38,18 +38,40 @@ class GUI(Frame):
         stream.close()
         p.terminate()
 
-    def audio_command(self):
+    def audio_command_1(self):
         '''
         this function is in charge of controlling the audio visualizer thread
         should be called by clicking the audio visualizer button
         '''
+        self.audio_exit=not self.audio_exit
+        self.ser.write(bytes('a',"utf-8"))
         self.visualthread=threading.Thread(target=self.audio_thread)
         self.visualthread.start()
-
+    def audio_command_2(self):
+        self.audio_exit=not self.audio_exit
+        self.ser.write(bytes('b',"utf-8"))
+        self.visualthread=threading.Thread(target=self.audio_thread)
+        self.visualthread.start()
+    def audio_command_3(self):
+        self.audio_exit=not self.audio_exit
+        self.ser.write(bytes('d',"utf-8"))
+        self.visualthread=threading.Thread(target=self.audio_thread)
+        self.visualthread.start()
+    def audio_command_4(self):
+        self.audio_exit=not self.audio_exit
+        self.ser.write(bytes('f',"utf-8"))
+        self.visualthread=threading.Thread(target=self.audio_thread)
+        self.visualthread.start()
+    def rainbow_command(self):
+        self.audio_exit=not self.audio_exit
+        self.ser.write(bytes('e',"utf-8"))
+        self.visualthread=threading.Thread(target=self.audio_thread)
+        self.visualthread.start()
     def reset_command(self):
         '''
         this is the function for the reset button, resets the 
         '''
+        self.ser.write(bytes('c',"utf-8"))
         self.audio_exit=not self.audio_exit
         print(self.audio_exit)
     
@@ -64,11 +86,15 @@ class GUI(Frame):
         self.colorEnter=Button(text="Display")#end row 1
         self.TimerIn=Entry()#begin row 2
         self.TimerCheck=Button(text="Start")#row 3
-        self.AudioVisualizer=Button(text="Audio Visualizer",command=self.audio_command)#row 4
-        self.weather=Button(text="Weather")
-        self.screen=Button(text="Audio Visualizer")
-        self.TBD1=Button(text="Audio Visualizer")
-        self.TBD2=Button(text="Audio Visualizer")
+
+        self.AudioVisualizer=Button(text="Audio Visualizer A",command=self.audio_command_1)#row 4
+        self.weather=Button(text="Audio Visualizer B",command=self.audio_command_2)
+        self.RainbowAudio=Button(text="Rainbow Audio",command=self.audio_command_3)
+        self.AudioVisualizerSides=Button(text="Audio Visualizer Sides",command=self.audio_command_4)
+        self.Rainbow=Button(text="Rainbow",command=self.rainbow_command)
+        self.screen=Button(text="TBD")
+        self.TBD1=Button(text="TBD")
+        self.TBD2=Button(text="TBD")
 
         #pack row 1
         self.lightdisplay.grid(row=0)
@@ -81,10 +107,12 @@ class GUI(Frame):
         self.TimerCheck.grid(row=2,column=2)
         self.AudioVisualizer.grid(row=2,column=3)
         self.weather.grid(row=2,column=3)
-        self.weather.grid(row=3,column=3)
+        self.Rainbow.grid(row=3,column=3)
         self.screen.grid(row=4,column=3)
-        self.TBD1.grid(row=5,column=3)
-        self.TBD2.grid(row=6,column=3)
+        self.RainbowAudio.grid(row=5,column=3)
+        self.AudioVisualizerSides.grid(row=6,column=2)
+        self.TBD1.grid(row=6,column=3)
+
         #end pack
 
     def __init__(self, master=None):
@@ -110,9 +138,5 @@ class GUI(Frame):
 
 if __name__=="__main__":
     root=Tk()
-    try:
-        ser=serial.Serial("COM5",9600)
-    except:
-        print("could not find arduino on COM5, check connection")
     mainWindow=GUI(master=root)
     mainWindow.mainloop()
