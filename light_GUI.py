@@ -39,7 +39,7 @@ class GUI(Frame):
         stream.close()
         p.terminate()
 
-    def audio_command_1(self):
+    def audio_original(self):
         '''
         this function is in charge of controlling the audio visualizer thread
         should be called by clicking the audio visualizer button
@@ -48,24 +48,9 @@ class GUI(Frame):
         self.ser.write(bytes('a',"utf-8"))
         self.visualthread=threading.Thread(target=self.audio_thread)
         self.visualthread.start()
-    def audio_command_2(self):
+    def audio_center(self):
         self.audio_exit=not self.audio_exit
         self.ser.write(bytes('b',"utf-8"))
-        self.visualthread=threading.Thread(target=self.audio_thread)
-        self.visualthread.start()
-    def audio_command_3(self):
-        self.audio_exit=not self.audio_exit
-        self.ser.write(bytes('d',"utf-8"))
-        self.visualthread=threading.Thread(target=self.audio_thread)
-        self.visualthread.start()
-    def audio_command_4(self):
-        self.audio_exit=not self.audio_exit
-        self.ser.write(bytes('f',"utf-8"))
-        self.visualthread=threading.Thread(target=self.audio_thread)
-        self.visualthread.start()
-    def rainbow_command(self):
-        self.audio_exit=not self.audio_exit
-        self.ser.write(bytes('e',"utf-8"))
         self.visualthread=threading.Thread(target=self.audio_thread)
         self.visualthread.start()
     def weather_command(self):
@@ -87,6 +72,21 @@ class GUI(Frame):
             self.ser.write(bytes(str(6)+'\n',"utf-8"))
         if(status=="Extreme"):
             self.ser.write(bytes(str(7)+'\n',"utf-8"))
+    def audio_rainbow(self):
+        self.audio_exit=not self.audio_exit
+        self.ser.write(bytes('d',"utf-8"))
+        self.visualthread=threading.Thread(target=self.audio_thread)
+        self.visualthread.start()    
+    def rainbow_command(self):
+        self.audio_exit=not self.audio_exit
+        self.ser.write(bytes('e',"utf-8"))
+        self.visualthread=threading.Thread(target=self.audio_thread)
+        self.visualthread.start()
+    def audio_sides(self):
+        self.audio_exit=not self.audio_exit
+        self.ser.write(bytes('f',"utf-8"))
+        self.visualthread=threading.Thread(target=self.audio_thread)
+        self.visualthread.start()
     def reset_command(self):
         '''
         this is the function for the reset button, resets the 
@@ -107,11 +107,11 @@ class GUI(Frame):
         self.TimerIn=Entry()#begin row 2
         self.TimerCheck=Button(text="Start")#row 3
 
-        self.AudioVisualizer=Button(text="Audio Visualizer A",command=self.audio_command_1)#row 4
+        self.AudioVisualizer=Button(text="Audio Visualizer Side",command=self.audio_original)#row 4
         self.weather=Button(text="Weather",command=self.weather_command)
-        self.AudioVisualizer2=Button(text="Audio Visualizer B",command=self.audio_command_2)
-        self.RainbowAudio=Button(text="Rainbow Audio",command=self.audio_command_3)
-        self.AudioVisualizerSides=Button(text="Audio Visualizer Sides",command=self.audio_command_4)
+        self.AudioVisualizer2=Button(text="Audio Visualizer Center",command=self.audio_center)
+        self.RainbowAudio=Button(text="Audio Visualizer Rainbow",command=self.audio_rainbow)
+        self.AudioVisualizerSides=Button(text="Audio Visualizer Sides",command=self.audio_sides)
         self.Rainbow=Button(text="Rainbow",command=self.rainbow_command)
         self.screen=Button(text="TBD")
         self.TBD1=Button(text="TBD")
@@ -119,21 +119,21 @@ class GUI(Frame):
 
         #pack row 1
         self.lightdisplay.grid(row=0)
-        self.reset_button.grid(row=1, column=3)
+        self.reset_button.grid(row=1, column=0)
         self.redval.grid(row=2,column=0)
         self.greenval.grid(row=3, column=0)
-        self.blueval.grid(row=4,column=0)
-        self.colorEnter.grid(row=5,column=0)
-        self.TimerIn.grid(row=2,column=1)
-        self.TimerCheck.grid(row=2,column=2)
-        self.AudioVisualizer.grid(row=2,column=3)
-        self.weather.grid(row=2,column=3)
-        self.Rainbow.grid(row=3,column=3)
-        self.screen.grid(row=4,column=3)
-        self.RainbowAudio.grid(row=5,column=3)
-        self.AudioVisualizerSides.grid(row=6,column=2)
-        self.TBD1.grid(row=6,column=3)
-        self.AudioVisualizer2.grid(row=6,column=4)
+        self.blueval.grid(row=0,column=1)
+        self.colorEnter.grid(row=1,column=1)
+        self.weather.grid(row=2,column=1)
+        self.TimerIn.grid(row=0,column=2)
+        self.TimerCheck.grid(row=1,column=2)
+        self.AudioVisualizer.grid(row=2,column=2)
+        self.Rainbow.grid(row=0,column=3)
+        self.screen.grid(row=1,column=3)
+        self.RainbowAudio.grid(row=2,column=3)
+        self.AudioVisualizerSides.grid(row=3,column=3)
+        self.TBD1.grid(row=3,column=1)
+        self.AudioVisualizer2.grid(row=3,column=2)
         #end pack
 
     def __init__(self, master=None):
@@ -150,7 +150,7 @@ class GUI(Frame):
                 print("could not connect (linux)")
         else:
             try:
-                self.ser=serial.Serial("COM4",9600)
+                self.ser=serial.Serial("COM5",9600)
             except:
                 print("could not connect (Windows)")
         

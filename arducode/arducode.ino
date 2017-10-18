@@ -96,19 +96,27 @@ void loop() {
   }
   else if(incomingchar=='c'){
     weatherfunct(input,1);
+    weatherfunct(input,0);
+    weatherfunct(input,2);
   }
   else if(incomingchar=='d'){
-    JD_funct2(2,input, tmp); //only jds strip
+    JD_funct2(2,input, tmp);
+    JD_funct2(1,input, tmp);
+    JD_funct2(0,input, tmp); //only jds strip
     ++tmp;
     if(tmp==256*5) {tmp=0;}
   }
   else if(incomingchar=='e'){
     rainbowCycle_for_button(25,2,tmp); //only jds strip
+    rainbowCycle_for_button(25,0,tmp);
+    rainbowCycle_for_button(25,1,tmp);
     ++tmp;
     if(tmp==256*5) {tmp=0;}
   }
   else if(incomingchar=='f'){
     JD_funct3(2,input,tmp); //only jds strip
+    JD_funct3(0,input,tmp);
+    JD_funct3(1,input,tmp);
     ++tmp;
     if(tmp==256*5) {tmp=0;}
   }
@@ -116,9 +124,14 @@ void loop() {
     colorWipe(strip.Color(0,255,122),10,2);
     colorWipe(strip.Color(0,122,255),10,2);
     colorWipe(strip.Color(122,0,122),10,2);
+    colorWipe(strip.Color(0,255,122),10,0);
+    colorWipe(strip.Color(0,122,255),10,0);
+    colorWipe(strip.Color(122,0,122),10,0);
+    colorWipe(strip.Color(0,255,122),10,1);
+    colorWipe(strip.Color(0,122,255),10,1);
+    colorWipe(strip.Color(122,0,122),10,1);
   }
 }
-
 
 void sunnylight(int stripnum){
   int randomnum=random(strips[stripnum].numPixels()-5);
@@ -275,10 +288,9 @@ void JD_funct2(int selected_strip, int integerValue, int tmp){
     // for(int i=move; i<center_val-move; i++){ //set lights up to numPixels() to black
     //   strips[selected_strip].setPixelColor(i,0,0,0);
     // }
-    for(int i=center_val-move; i< center_val; i++){ //select lights from center towards numPixels()
-      strips[selected_strip].setPixelColor(i,0,255,0);
+    for(int i=move; i< center_val-move; i++){ //select lights from center towards numPixels()
+      strips[selected_strip].setPixelColor(i,0,0,0);
     }
-    
     strips[selected_strip].show();
     return;
   }
