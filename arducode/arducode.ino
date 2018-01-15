@@ -24,6 +24,7 @@ int gabe = 0; //sets if JD or gabes stuff should be used
 
 void setup() {
   Serial.begin(9600);
+  colorWipe(strip.Color(255,0,0),10,1);
   for(int i=0; i<NUMSTRIPS; i++){ //loop begins and erases all strips
     strips[i].begin(); //starts strip
     strips[i].show(); //sets strip to blank
@@ -90,9 +91,9 @@ void loop() {
     gabesfunct(2,input);//only jds strip
   }
   else if(incomingchar=='b'){
-    JD_funct(1,input);
+    //JD_funct(1,input);
     JD_funct(0,input);
-    JD_funct(2,input);//only jds strip
+    //JD_funct(2,input);//only jds strip
   }
   else if(incomingchar=='c'){
     weatherfunct(input,1);
@@ -121,7 +122,8 @@ void loop() {
     if(tmp==256*5) {tmp=0;}
   }
   else{
-    colorWipe(strip.Color(0,255,122),10,2);
+    //colorWipe(strip.Color(255,0,0),10,1);
+    /*colorWipe(strip.Color(0,255,122),10,2);
     colorWipe(strip.Color(0,122,255),10,2);
     colorWipe(strip.Color(122,0,122),10,2);
     colorWipe(strip.Color(0,255,122),10,0);
@@ -129,7 +131,7 @@ void loop() {
     colorWipe(strip.Color(122,0,122),10,0);
     colorWipe(strip.Color(0,255,122),10,1);
     colorWipe(strip.Color(0,122,255),10,1);
-    colorWipe(strip.Color(122,0,122),10,1);
+    colorWipe(strip.Color(122,0,122),10,1);*/
   }
 }
 
@@ -192,8 +194,8 @@ int SerialRead(){ //this function works
 
 void JD_funct(int selected_strip, int integerValue){
   int center_val =strips[selected_strip].numPixels()/2;  
-  int move =map(integerValue/2, 1, 70, 1, strips[selected_strip].numPixels());// integerValue/2;
-  if(selected_strip==0){ 
+  int move =map(integerValue, 1, 70, 1, strips[selected_strip].numPixels());// integerValue/2;
+  if(selected_strip==9){ 
     for(int i=center_val; i >= center_val-move && i>0; i--){ //select lights from center towards pos 0
       strips[selected_strip].setPixelColor(i,ciroc[i][0],ciroc[i][1],ciroc[i][2]);
     }
@@ -216,7 +218,7 @@ void JD_funct(int selected_strip, int integerValue){
       strips[selected_strip].setPixelColor(i,0,0,0);
     }
     for(int i=center_val; i<= (center_val+move) && i<strips[selected_strip].numPixels(); i++){ //select lights from center towards numPixels()
-      strips[selected_strip].setPixelColor(i,0,0,255);
+      strips[selected_strip].setPixelColor(i,255,0,0);
     }
     for(int i=center_val + move; i<strips[selected_strip].numPixels(); i++){ //set lights up to numPixels() to black
       strips[selected_strip].setPixelColor(i,0,0,0);
@@ -227,7 +229,7 @@ void JD_funct(int selected_strip, int integerValue){
 
 void JD_funct2(int selected_strip, int integerValue, int tmp){
   int center_val =strips[selected_strip].numPixels()/2;  
-  int move =map(integerValue/2, 1, 70, 1, strips[selected_strip].numPixels());// integerValue/2;
+  int move =map(integerValue, 1, 70, 1, strips[selected_strip].numPixels());// integerValue/2;
   int start, end_, back = 0;
 
   start = center_val;
@@ -250,26 +252,17 @@ void JD_funct2(int selected_strip, int integerValue, int tmp){
 
   //Flips black/color, from sides instead of center
   void JD_funct3(int selected_strip, int integerValue, int tmp){
-    // clear_all();
     int center_val =strips[selected_strip].numPixels()/2;  
-    int move =map(integerValue/2, 1, 70, 1, strips[selected_strip].numPixels());// integerValue/2;
+    int move =map(integerValue, 1, 70, 1, strips[selected_strip].numPixels());// integerValue/2;
     
     int start,end_,back=0;
     start = strips[selected_strip].numPixels()-move;
     end_ = strips[selected_strip].numPixels();
-    // back = 0;
     rainbowCycle_for_audio(50, selected_strip, start, end_, back, tmp);
-    // for(int i=strips[selected_strip].numPixels(); i>=strips[selected_strip].numPixels()-move; i--){ //select lights from center towards pos 0
-    //   strips[selected_strip].setPixelColor(i,0,255,0);
-    // }
     back = 0;
     start = center_val;
     end_ = center_val+move;
-    // back = 0;
     rainbowCycle_for_audio(50, selected_strip, start, end_, back, tmp);
-    // for(int i=center_val; i<= (center_val+move); i++){ //select lights from center towards numPixels()
-    //   strips[selected_strip].setPixelColor(i,0,0,255);
-    // }
     for(int i=center_val+move; i <= strips[selected_strip].numPixels()-move && i>0; i++){ //select lights from center towards pos 0
       strips[selected_strip].setPixelColor(i,0,0,0);
     }

@@ -18,8 +18,7 @@ class GUI(Frame):
         CHUNK = 2**11
         RATE = 44100
         p=pyaudio.PyAudio()
-        stream=p.open(format=pyaudio.paInt16,channels=1,rate=RATE,input=True,
-                    frames_per_buffer=CHUNK)
+        stream=p.open(format=pyaudio.paInt16,channels=1,rate=RATE,input=True, frames_per_buffer=CHUNK)
 
         while(self.audio_exit==False):
             data = np.fromstring(stream.read(CHUNK),dtype=np.int16)
@@ -48,11 +47,13 @@ class GUI(Frame):
         self.ser.write(bytes('a',"utf-8"))
         self.visualthread=threading.Thread(target=self.audio_thread)
         self.visualthread.start()
+
     def audio_center(self):
         self.audio_exit=not self.audio_exit
         self.ser.write(bytes('b',"utf-8"))
         self.visualthread=threading.Thread(target=self.audio_thread)
         self.visualthread.start()
+
     def weather_command(self):
         self.ser.write(bytes('c',"utf-8"))
         w=self.forcast.get_weather()
@@ -72,21 +73,23 @@ class GUI(Frame):
             self.ser.write(bytes(str(6)+'\n',"utf-8"))
         if(status=="Extreme"):
             self.ser.write(bytes(str(7)+'\n',"utf-8"))
+
     def audio_rainbow(self):
         self.audio_exit=not self.audio_exit
         self.ser.write(bytes('d',"utf-8"))
         self.visualthread=threading.Thread(target=self.audio_thread)
         self.visualthread.start()    
+
     def rainbow_command(self):
         self.audio_exit=not self.audio_exit
         self.ser.write(bytes('e',"utf-8"))
-        self.visualthread=threading.Thread(target=self.audio_thread)
-        self.visualthread.start()
+
     def audio_sides(self):
         self.audio_exit=not self.audio_exit
         self.ser.write(bytes('f',"utf-8"))
         self.visualthread=threading.Thread(target=self.audio_thread)
         self.visualthread.start()
+
     def reset_command(self):
         '''
         this is the function for the reset button, resets the 
@@ -145,12 +148,12 @@ class GUI(Frame):
         self.forcast=self.owm.weather_at_place("Houston, US")
         if(sys.platform=="linux"):
             try:
-                self.ser=serial.Serial("/dev/tty.usbserial",9600)
+                self.ser=serial.Serial("/dev/ttyS4",115200)
             except:
                 print("could not connect (linux)")
         else:
             try:
-                self.ser=serial.Serial("COM5",9600)
+                self.ser=serial.Serial("COM4",9600)
             except:
                 print("could not connect (Windows)")
         
