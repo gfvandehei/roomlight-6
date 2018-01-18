@@ -140,22 +140,44 @@ class GUI(Frame):
         #end pack
 
     def __init__(self, master=None):
-        self.audio_exit=False
-        Frame.__init__(self, master)
+        #class variable definition
         self.LEDNUM=0
+        self.audio_exit=False
+        self.connect_Status=False #used to store if an arduino was found
         self.owm=pyowm.OWM("3bfa77875cd0a2c86b4a809e701a2833")
-        #self.forcast=self.owm.weather_at_coords(42.73, -73.69)
-        self.forcast=self.owm.weather_at_place("Houston, US")
+        self.forcast=self.owm.weather_at_coords(42.728409,-73.691788)
+        #local variable definition
+        comlist_windows=["COM2","COM3","COM4","COM5","COM6","COM7"]#COM1 is not included because that is reserved
+        comlist_Linux=["/dev/ttyUSB0","/dev/ttyUSB1","/dev/ttyUSB2","/dev/ttyUSB3","/dev/ttyACM0","/dev/ttyACM1","/dev/ttyACM2"]
+        Frame.__init__(self, master)
+        
         if(sys.platform=="linux"):
-            try:
-                self.ser=serial.Serial("/dev/ttyS4",115200)
-            except:
-                print("could not connect (linux)")
+            #this attempts to connect to available com ports to see if an arduino is connected
+            print("Attempting to connect (Linux)")
+            for i in comlist_Linux:
+                try:
+                    self.ser=serial.Serial(i, 9600)
+                except:
+                    print("could not connect to "+i+" (Linux)")
+                    continue
+                self.connect=True
+                break
         else:
-            try:
-                self.ser=serial.Serial("COM4",9600)
-            except:
-                print("could not connect (Windows)")
+            #this attempts to connect to available com ports to see if an arduino is connected
+            print("Attempting to connect (WINDOWS)")
+            for i in comlist_windows:
+                try:
+                    self.ser=serial.Serial(i, 9600)
+                except:
+                    print("could not connect to "+i+" (Windows)")
+                    continue
+                self.connect_Status=True
+                break
+
+            if self.connect_Status==True:
+                print("You have connected to device on "+i)
+            else:
+                print("There has been some trouble connecting to device, please reconnect and try again")
         
         self.createWidgets()
 
