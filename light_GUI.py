@@ -43,60 +43,81 @@ class GUI(Frame):
         this function is in charge of controlling the audio visualizer thread
         should be called by clicking the audio visualizer button
         '''
-        self.audio_exit=not self.audio_exit
-        self.ser.write(bytes('a',"utf-8"))
-        self.visualthread=threading.Thread(target=self.audio_thread)
-        self.visualthread.start()
+        if(self.connect_Status==False):
+            print("Arduino must be connected to use audio visualizer")
+        else:
+            self.audio_exit=not self.audio_exit
+            self.ser.write(bytes('a',"utf-8"))
+            self.visualthread=threading.Thread(target=self.audio_thread)
+            self.visualthread.start()
 
     def audio_center(self):
-        self.audio_exit=not self.audio_exit
-        self.ser.write(bytes('b',"utf-8"))
-        self.visualthread=threading.Thread(target=self.audio_thread)
-        self.visualthread.start()
+        if(self.connect_Status==False):
+            print("Arduino must be connected to use audio visualizer")
+        else:
+            self.audio_exit=not self.audio_exit
+            self.ser.write(bytes('b',"utf-8"))
+            self.visualthread=threading.Thread(target=self.audio_thread)
+            self.visualthread.start()
 
     def weather_command(self):
-        self.ser.write(bytes('c',"utf-8"))
-        w=self.forcast.get_weather()
-        status=w.get_status()
-        #clear=1, clouds=2, Snow=3, rain=4, thunderstorm=5, Drizzle=6, extreme=7
-        if(status=="Clear"):
-            self.ser.write(bytes(str(1)+'\n',"utf-8"))
-        if(status=="Clouds"):
-            self.ser.write(bytes(str(2)+'\n',"utf-8"))
-        if(status=="Snow"):
-            self.ser.write(bytes(str(3)+'\n',"utf-8"))
-        if(status=="Rain"):
-            self.ser.write(bytes(str(4)+'\n',"utf-8"))
-        if(status=="Thunderstorm"):
-            self.ser.write(bytes(str(5)+'\n',"utf-8"))
-        if(status=="Drizzle"):
-            self.ser.write(bytes(str(6)+'\n',"utf-8"))
-        if(status=="Extreme"):
-            self.ser.write(bytes(str(7)+'\n',"utf-8"))
+        if(self.connect_Status==False):
+            print("Arduino must be connected to use weather function")
+        else:
+            self.ser.write(bytes('c',"utf-8"))
+            w=self.forcast.get_weather()
+            status=w.get_status()
+            #clear=1, clouds=2, Snow=3, rain=4, thunderstorm=5, Drizzle=6, extreme=7
+            if(status=="Clear"):
+                self.ser.write(bytes(str(1)+'\n',"utf-8"))
+            if(status=="Clouds"):
+                self.ser.write(bytes(str(2)+'\n',"utf-8"))
+            if(status=="Snow"):
+                self.ser.write(bytes(str(3)+'\n',"utf-8"))
+            if(status=="Rain"):
+                self.ser.write(bytes(str(4)+'\n',"utf-8"))
+            if(status=="Thunderstorm"):
+                self.ser.write(bytes(str(5)+'\n',"utf-8"))
+            if(status=="Drizzle"):
+                self.ser.write(bytes(str(6)+'\n',"utf-8"))
+            if(status=="Extreme"):
+                self.ser.write(bytes(str(7)+'\n',"utf-8"))
 
     def audio_rainbow(self):
-        self.audio_exit=not self.audio_exit
-        self.ser.write(bytes('d',"utf-8"))
-        self.visualthread=threading.Thread(target=self.audio_thread)
-        self.visualthread.start()    
+        if(self.connect_Status==False):
+            print("Arduino must be connected to use audio visualizer")
+        else:
+            self.audio_exit=not self.audio_exit
+            self.ser.write(bytes('d',"utf-8"))
+            self.visualthread=threading.Thread(target=self.audio_thread)
+            self.visualthread.start()    
 
     def rainbow_command(self):
-        self.audio_exit=not self.audio_exit
-        self.ser.write(bytes('e',"utf-8"))
+        if(self.connect_Status==False):
+            print("Arduino must be connected to use lighting effects")
+        else:
+            self.audio_exit=not self.audio_exit
+            self.ser.write(bytes('e',"utf-8"))
 
     def audio_sides(self):
-        self.audio_exit=not self.audio_exit
-        self.ser.write(bytes('f',"utf-8"))
-        self.visualthread=threading.Thread(target=self.audio_thread)
-        self.visualthread.start()
+        if(self.connect_Status==False):
+            print("Arduino must be connected to use audio visualizer")
+        else:
+            self.audio_exit=not self.audio_exit
+            self.ser.write(bytes('f',"utf-8"))
+            self.visualthread=threading.Thread(target=self.audio_thread)
+            self.visualthread.start()
 
     def reset_command(self):
         '''
         this is the function for the reset button, resets the 
         '''
-        self.ser.write(bytes('z',"utf-8"))
-        self.audio_exit=not self.audio_exit
-        print(self.audio_exit)
+        if(self.connect_Status==False):
+            print("Arduino must be connected to use this button")
+        else:
+            self.ser.write(bytes('z',"utf-8"))
+            self.audio_exit=not self.audio_exit
+            print(self.audio_exit)
     
     def createWidgets(self):
 
