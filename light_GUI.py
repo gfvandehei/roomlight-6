@@ -26,14 +26,12 @@ class GUI(Frame):
             bars="#"*int(50*peak/2**16)
             henlo=int(50*peak/2**14)
             henlo2=str(henlo)
+
             try:
-                #print("THIS IS IT",bytes(henlo2,"utf-8"))
                 self.ser.write(bytes(henlo2+'\n',"utf-8"))
-                #print(self.ser.read())
             except:
                 print("NUT")
             
-
         stream.stop_stream()
         stream.close()
         p.terminate()
@@ -121,7 +119,56 @@ class GUI(Frame):
     
     def createWidgets(self):
 
-        self.reset_button=Button(text="reset", command=self.reset_command)
+        self.ModeVar=StringVar()
+        self.ModeVar.set("Please select a mode")
+        self.modeDisplay=Label(textvariable=self.ModeVar)
+        self.right_labelframe=LabelFrame(text="Coming soon")
+        self.mid_labelframe=LabelFrame(text="Display Modes")
+        self.left_labelframe=LabelFrame(text="Audio Visualizers")
+        self.indicatorFrame=LabelFrame(text="Indicators")
+        #these are the widgets for the left labelframe
+        self.av1=Button(self.left_labelframe,text="Original Light",width=10,command=self.audio_original)
+        self.av2=Button(self.left_labelframe,text="Center Light",width=10,command=self.audio_center)
+        self.av3=Button(self.left_labelframe,text="Edge Light",width=10,command=self.audio_sides)
+        self.av4=Button(self.left_labelframe,text="Rainbow",width=10,command=self.audio_rainbow)
+        #these are the widgets for the middle frame
+        self.display1=Button(self.mid_labelframe,text="Display1",width=10)
+        self.display2=Button(self.mid_labelframe,text="Display2",width=10)
+        self.display3=Button(self.mid_labelframe,text="Display3",width=10)
+        self.display4=Button(self.mid_labelframe,text="Display4",width=10)
+        #these are the widgets for the right labelframe
+        self.right_1=Button(self.right_labelframe,text="right_1",width=10)
+        self.right_2=Button(self.right_labelframe,text="right_2",width=10)
+        self.right_3=Button(self.right_labelframe,text="right_3",width=10)
+        self.right_4=Button(self.right_labelframe,text="right_4",width=10)
+        #these are the widgets for indicatorframe
+        self.connectLight=Button(self.indicatorFrame,text="Serial",state=DISABLED,bg='red',width=5)
+
+        #attach to GUI section
+        self.modeDisplay.grid(row=0,column=1, columnspan=2)
+        self.right_labelframe.grid(row=1, column=2)
+        self.mid_labelframe.grid(row=1,column=1)
+        self.left_labelframe.grid(row=1,column=0)
+        self.indicatorFrame.grid(row=1,column=3)
+        #packs left frame buttons
+        self.av1.pack()
+        self.av2.pack()
+        self.av3.pack()
+        self.av4.pack()
+        #packs mid frame
+        self.display1.pack()
+        self.display2.pack()
+        self.display3.pack()
+        self.display4.pack()
+        #puts right frame buttons in frame
+        self.right_1.pack()
+        self.right_2.pack()
+        self.right_3.pack()
+        self.right_4.pack()
+        #packs indicatorframe widgets
+        self.connectLight.pack()
+
+        '''self.reset_button=Button(text="reset", command=self.reset_command)
         self.lightdisplay=Message(width=300,text="-"*72)
         self.redval=Spinbox(from_=0,to=255)#begin row 1
         self.greenval=Spinbox(from_=0,to=255)
@@ -158,7 +205,7 @@ class GUI(Frame):
         self.AudioVisualizerSides.grid(row=3,column=3)
         self.TBD1.grid(row=3,column=1)
         self.AudioVisualizer2.grid(row=3,column=2)
-        #end pack
+        #end pack'''
 
     def __init__(self, master=None):
         #class variable definition
@@ -171,12 +218,14 @@ class GUI(Frame):
         comlist_windows=["COM2","COM3","COM4","COM5","COM6","COM7"]#COM1 is not included because that is reserved
         comlist_Linux=["/dev/ttyUSB0","/dev/ttyUSB1","/dev/ttyUSB2","/dev/ttyUSB3","/dev/ttyACM0","/dev/ttyACM1","/dev/ttyACM2"]
         Frame.__init__(self, master)
-        
+        self.createWidgets()
+
         if(sys.platform=="linux"):
-            #this attempts to connect to available com ports to see if an arduino is connected
+            #this attempts to connect to available devices to see if an arduino is connected
             print("Attempting to connect (Linux)")
             for i in comlist_Linux:
                 try:
+                    #attempts to connect to serial device
                     self.ser=serial.Serial(i, 9600)
                 except:
                     print("could not connect to "+i+" (Linux)")
@@ -188,6 +237,7 @@ class GUI(Frame):
             print("Attempting to connect (WINDOWS)")
             for i in comlist_windows:
                 try:
+                    #attempts to connect to com port
                     self.ser=serial.Serial(i, 9600)
                 except:
                     print("could not connect to "+i+" (Windows)")
@@ -195,12 +245,11 @@ class GUI(Frame):
                 self.connect_Status=True
                 break
 
-            if self.connect_Status==True:
-                print("You have connected to device on "+i)
-            else:
-                print("There has been some trouble connecting to device, please reconnect and try again")
-        
-        self.createWidgets()
+        if self.connect_Status==True:
+            print("You have connected to device on "+i)
+            self.connectLight["bg"]='green'
+        else:
+            print("There has been some trouble connecting to device, please reconnect and try again")
 
 
 
@@ -209,4 +258,6 @@ class GUI(Frame):
 if __name__=="__main__":
     root=Tk()
     mainWindow=GUI(master=root)
+    mainWindow.master.title("Neopixel Control Interface")
+    mainWindow.master.wm_iconbitmap('laylabytes.ico')
     mainWindow.mainloop()
