@@ -148,7 +148,7 @@ class GUI(Frame):
         self.forcast=self.owm.weather_at_place("Houston, US")
         if(sys.platform=="linux"):
             try:
-                self.ser=serial.Serial("/dev/ttyS4",115200)
+                self.ser=serial.Serial("/dev/ttyACM0",9600)
             except:
                 print("could not connect (linux)")
         else:
