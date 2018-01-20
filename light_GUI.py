@@ -44,6 +44,7 @@ class GUI(Frame):
         if(self.connect_Status==False):
             print("Arduino must be connected to use audio visualizer")
         else:
+            self.ModeVar.set("Original Light")
             self.audio_exit=not self.audio_exit
             self.ser.write(bytes('a',"utf-8"))
             self.visualthread=threading.Thread(target=self.audio_thread)
@@ -53,6 +54,7 @@ class GUI(Frame):
         if(self.connect_Status==False):
             print("Arduino must be connected to use audio visualizer")
         else:
+            self.ModeVar.set("Center Light")
             self.audio_exit=not self.audio_exit
             self.ser.write(bytes('b',"utf-8"))
             self.visualthread=threading.Thread(target=self.audio_thread)
@@ -62,6 +64,7 @@ class GUI(Frame):
         if(self.connect_Status==False):
             print("Arduino must be connected to use weather function")
         else:
+            self.ModeVar.set("Weather Display")
             self.ser.write(bytes('c',"utf-8"))
             w=self.forcast.get_weather()
             status=w.get_status()
@@ -85,6 +88,7 @@ class GUI(Frame):
         if(self.connect_Status==False):
             print("Arduino must be connected to use audio visualizer")
         else:
+            self.ModeVar.set("Rainbow Visualizer")
             self.audio_exit=not self.audio_exit
             self.ser.write(bytes('d',"utf-8"))
             self.visualthread=threading.Thread(target=self.audio_thread)
@@ -94,6 +98,7 @@ class GUI(Frame):
         if(self.connect_Status==False):
             print("Arduino must be connected to use lighting effects")
         else:
+            self.ModeVar.set("Rainbow Display")
             self.audio_exit=not self.audio_exit
             self.ser.write(bytes('e',"utf-8"))
 
@@ -101,6 +106,7 @@ class GUI(Frame):
         if(self.connect_Status==False):
             print("Arduino must be connected to use audio visualizer")
         else:
+            self.ModeVar.set("Edge Light")
             self.audio_exit=not self.audio_exit
             self.ser.write(bytes('f',"utf-8"))
             self.visualthread=threading.Thread(target=self.audio_thread)
@@ -113,6 +119,7 @@ class GUI(Frame):
         if(self.connect_Status==False):
             print("Arduino must be connected to use this button")
         else:
+            self.ModeVar.set("Please select a mode")
             self.ser.write(bytes('z',"utf-8"))
             self.audio_exit=not self.audio_exit
             print(self.audio_exit)
@@ -126,23 +133,25 @@ class GUI(Frame):
         self.mid_labelframe=LabelFrame(text="Display Modes")
         self.left_labelframe=LabelFrame(text="Audio Visualizers")
         self.indicatorFrame=LabelFrame(text="Indicators")
+        self.maintainFrame=LabelFrame(text="Functions")
         #these are the widgets for the left labelframe
         self.av1=Button(self.left_labelframe,text="Original Light",width=10,command=self.audio_original)
         self.av2=Button(self.left_labelframe,text="Center Light",width=10,command=self.audio_center)
         self.av3=Button(self.left_labelframe,text="Edge Light",width=10,command=self.audio_sides)
         self.av4=Button(self.left_labelframe,text="Rainbow",width=10,command=self.audio_rainbow)
         #these are the widgets for the middle frame
-        self.display1=Button(self.mid_labelframe,text="Display1",width=10)
+        self.display1=Button(self.mid_labelframe,text="Rainbow",width=10,command=self.rainbow_command)
         self.display2=Button(self.mid_labelframe,text="Display2",width=10)
         self.display3=Button(self.mid_labelframe,text="Display3",width=10)
         self.display4=Button(self.mid_labelframe,text="Display4",width=10)
         #these are the widgets for the right labelframe
-        self.right_1=Button(self.right_labelframe,text="right_1",width=10)
+        self.right_1=Button(self.right_labelframe,text="Weather",width=10,command=self.weather_command)
         self.right_2=Button(self.right_labelframe,text="right_2",width=10)
         self.right_3=Button(self.right_labelframe,text="right_3",width=10)
         self.right_4=Button(self.right_labelframe,text="right_4",width=10)
         #these are the widgets for indicatorframe
-        self.connectLight=Button(self.indicatorFrame,text="Serial",state=DISABLED,bg='red',width=5)
+        self.connectLight=Button(self.indicatorFrame,text="Serial",state=DISABLED,bg='red',width=10)
+        self.reset=Button(self.maintainFrame,text="Reset",command=self.reset_command, width=50)
 
         #attach to GUI section
         self.modeDisplay.grid(row=0,column=1, columnspan=2)
@@ -150,6 +159,7 @@ class GUI(Frame):
         self.mid_labelframe.grid(row=1,column=1)
         self.left_labelframe.grid(row=1,column=0)
         self.indicatorFrame.grid(row=1,column=3)
+        self.maintainFrame.grid(row=2,column=0,columnspan=4)
         #packs left frame buttons
         self.av1.pack()
         self.av2.pack()
@@ -167,45 +177,18 @@ class GUI(Frame):
         self.right_4.pack()
         #packs indicatorframe widgets
         self.connectLight.pack()
+        #packs maintainance frame
+        self.reset.pack()
 
-        '''self.reset_button=Button(text="reset", command=self.reset_command)
-        self.lightdisplay=Message(width=300,text="-"*72)
-        self.redval=Spinbox(from_=0,to=255)#begin row 1
-        self.greenval=Spinbox(from_=0,to=255)
-        self.blueval=Spinbox(from_=0,to=255)
-        self.LEDSelector=Spinbox(from_=0,to=self.LEDNUM)
-        self.colorEnter=Button(text="Display")#end row 1
-        self.TimerIn=Entry()#begin row 2
-        self.TimerCheck=Button(text="Start")#row 3
+        '''
 
-        self.AudioVisualizer=Button(text="Audio Visualizer Side",command=self.audio_original)#row 4
         self.weather=Button(text="Weather",command=self.weather_command)
-        self.AudioVisualizer2=Button(text="Audio Visualizer Center",command=self.audio_center)
-        self.RainbowAudio=Button(text="Audio Visualizer Rainbow",command=self.audio_rainbow)
-        self.AudioVisualizerSides=Button(text="Audio Visualizer Sides",command=self.audio_sides)
         self.Rainbow=Button(text="Rainbow",command=self.rainbow_command)
         self.screen=Button(text="TBD")
         self.TBD1=Button(text="TBD")
         self.TBD2=Button(text="TBD")
 
-        #pack row 1
-        self.lightdisplay.grid(row=0)
-        self.reset_button.grid(row=1, column=0)
-        self.redval.grid(row=2,column=0)
-        self.greenval.grid(row=3, column=0)
-        self.blueval.grid(row=0,column=1)
-        self.colorEnter.grid(row=1,column=1)
-        self.weather.grid(row=2,column=1)
-        self.TimerIn.grid(row=0,column=2)
-        self.TimerCheck.grid(row=1,column=2)
-        self.AudioVisualizer.grid(row=2,column=2)
-        self.Rainbow.grid(row=0,column=3)
-        self.screen.grid(row=1,column=3)
-        self.RainbowAudio.grid(row=2,column=3)
-        self.AudioVisualizerSides.grid(row=3,column=3)
-        self.TBD1.grid(row=3,column=1)
-        self.AudioVisualizer2.grid(row=3,column=2)
-        #end pack'''
+'''
 
     def __init__(self, master=None):
         #class variable definition
@@ -244,7 +227,7 @@ class GUI(Frame):
                     continue
                 self.connect_Status=True
                 break
-
+        
         if self.connect_Status==True:
             print("You have connected to device on "+i)
             self.connectLight["bg"]='green'
