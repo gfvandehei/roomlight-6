@@ -213,7 +213,7 @@ class GUI(Frame):
                 except:
                     print("could not connect to "+i+" (Linux)")
                     continue
-                self.connect=True
+                self.connect_Status=True
                 break
         else:
             #this attempts to connect to available com ports to see if an arduino is connected
