@@ -242,5 +242,5 @@ if __name__=="__main__":
     root=Tk()
     mainWindow=GUI(master=root)
     mainWindow.master.title("Neopixel Control Interface")
-    mainWindow.master.wm_iconbitmap('laylabytes.ico')
+    #mainWindow.master.wm_iconbitmap('laylabytes.ico')
     mainWindow.mainloop()
