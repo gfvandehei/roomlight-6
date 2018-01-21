@@ -1,0 +1,104 @@
+void bounce(int numstrip){
+  for(int i=0;i<strips[numstrip].numPixels()-10;i++){
+    for(int u=i;u<i+10;u++){
+      strips[numstrip].setPixelColor(u,255,0,0);
+    }
+    for(int u=0;u<i;u++){
+      strips[numstrip].setPixelColor(u,0,0,0);
+    }
+    delay(10);
+    strips[numstrip].show();
+  }
+  for(int i=strips[numstrip].numPixels()-10;i>=0;i--){
+    for(int u=i;u<i+10;u++){
+      strips[numstrip].setPixelColor(u,255,0,0);
+    }
+    for(int u=strips[numstrip].numPixels();u>i+10;u--){
+      strips[numstrip].setPixelColor(u,0,0,0);
+    }
+    delay(10);
+    strips[numstrip].show();
+  }
+}
+
+
+--------------------------------
+
+
+void set_work_light(char* ltype, int strip_num){
+  if(ltype=="white"){
+    color_area(strip_num,0,NUMPIX,255,255,255,255);
+  }
+  else if(ltype=="yellow"){
+    color_area(strip_num,0,NUMPIX,255,255,147,255);
+  }
+  else{
+    printf("invalid work light");
+  }
+}
+
+-------------------------------
+
+void color_area(int numstrip,int start, int num, int r, int g, int b, int brightness){
+  //colors a certain area of the strip
+  strips[numstrip].setBrightness(brightness);
+  for(int i=start;i<=start+num;i++){
+    strips[numstrip].setPixelColor(i,r,g,b);
+  }
+  strips[numstrip].show();
+}
+
+
+--------------------------------
+
+void rainbow(uint8_t wait) {
+  uint16_t i, j;
+
+  for(j=0; j<256; j++) {
+    for(i=0; i<strip.numPixels(); i++) {
+      strip.setPixelColor(i, Wheel((i+j) & 255));
+    }
+    strip.show();
+    delay(wait);
+  }
+}
+
+--------------------------------------
+
+void theaterChase(uint32_t c, uint8_t wait) {
+  for (int j=0; j<10; j++) {  //do 10 cycles of chasing
+    for (int q=0; q < 3; q++) {
+      for (uint16_t i=0; i < strip.numPixels(); i=i+3) {
+        strip.setPixelColor(i+q, c);    //turn every third pixel on
+      }
+      strip.show();
+
+      delay(wait);
+
+      for (uint16_t i=0; i < strip.numPixels(); i=i+3) {
+        strip.setPixelColor(i+q, 0);        //turn every third pixel off
+      }
+    }
+  }
+}
+
+----------------------------------------
+
+void theaterChaseRainbow(uint8_t wait) {
+  for (int j=0; j < 256; j++) {     // cycle all 256 colors in the wheel
+    for (int q=0; q < 3; q++) {
+      for (uint16_t i=0; i < strip.numPixels(); i=i+3) {
+        strip.setPixelColor(i+q, Wheel( (i+j) % 255));    //turn every third pixel on
+      }
+      strip.show();
+
+      delay(wait);
+
+      for (uint16_t i=0; i < strip.numPixels(); i=i+3) {
+        strip.setPixelColor(i+q, 0);        //turn every third pixel off
+      }
+    }
+  }
+}
+
+----------------------------------------
