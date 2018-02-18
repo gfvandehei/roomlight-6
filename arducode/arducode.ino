@@ -225,14 +225,26 @@ void JD_funct3(int selected_strip, int integerValue, int tmp){
   return;
 }
 
-void single_side_vis(Adafruit_NeoPixel selected_strip, int integerValue){
-  for(int i=0;i<=integerValue;i++){
-    selected_strip.setPixelColor(i,255,255,0);
+void single_side_vis(int selected_strip, int integerValue){
+  integerValue=map(integerValue, 1, 70, 1, strips[selected_strip].numPixels());
+  if(selected_strip==0){
+    for(int i=0;i<=integerValue;i++){
+      strips[selected_strip].setPixelColor(i,255,255,0);
+    }
+    for(int i=integerValue;i<strips[selected_strip].numPixels();i++){
+      strips[selected_strip].setPixelColor(i,0,0,0);
+    }
+    strips[selected_strip].show();
   }
-  for(int i=integerValue;i<selected_strip.numPixels();i++){
-    selected_strip.setPixelColor(i,0,0,255);
+  else{
+    for(int i=0;i<=integerValue;i++){
+      strips[selected_strip].setPixelColor(i,255,255,0);
+    }
+    for(int i=integerValue;i<strips[selected_strip].numPixels();i++){
+      strips[selected_strip].setPixelColor(i,0,0,255);
+    }
+    strips[selected_strip].show();
   }
-  selected_strip.show();
 }
 // Fill the dots one after the other with a color
 void clear_all(int numstrip){
@@ -244,14 +256,18 @@ void clear_all(int numstrip){
 }
 
 // Slightly different, this makes the rainbow equally distributed throughout
-void rainbowCycle_for_button(uint8_t wait, int selected_strip, int j) {
+void rainbowCycle_for_button(uint8_t wait, int j) {
   uint16_t i;
 
   // for(j=0; j<256*5; j++) { // 5 cycles of all colors on wheel
-    for(i=0; i< strips[selected_strip].numPixels(); i++) {
-      strips[selected_strip].setPixelColor(i, Wheel(((i * 256 / strips[selected_strip].numPixels()) + j) & 255));
+    for(i=0; i< 300; i++) {
+      for(int z=0; z<3;z++){
+        strips[z].setPixelColor(i, Wheel(((i * 256 / strips[z].numPixels()) + j) & 255));
+      }
     }
-    strips[selected_strip].show();
+    strips[0].show();
+    strips[1].show();
+    strips[2].show();
     delay(wait); 
     return;   //added return so incoming char can still be read
   // }
@@ -274,9 +290,12 @@ int tmp =0;
 void loop() {
   int input=SerialRead();
   if(incomingchar=='a'){
-    for(int i=0;i<NUMSTRIPS;i++){
+    /*for(int i=0;i<NUMSTRIPS;i++){
       single_side_vis(strips[i],input);
-    }
+    }*/
+    single_side_vis(0,input);
+    single_side_vis(1,input);
+    single_side_vis(2,input);
   }
   else if(incomingchar=='b'){
     for(int i=0;i<NUMSTRIPS;i++){
@@ -299,9 +318,8 @@ void loop() {
     if(tmp==256*5) {tmp=0;}
   }
   else if(incomingchar=='e'){
-    rainbowCycle_for_button(25,2,tmp); //only jds strip
-    rainbowCycle_for_button(25,0,tmp);
-    rainbowCycle_for_button(25,1,tmp);
+    rainbowCycle_for_button(25,tmp);
+    
     ++tmp;
     if(tmp==256*5) {tmp=0;}
   }
@@ -313,6 +331,7 @@ void loop() {
     if(tmp==256*5) {tmp=0;}
   }
   else{
-    //colorWipe(strip.Color(255,0,0),10,1);
+    colorWipe(strip.Color(255,0,0),10,1);
+    colorWipe(strip.Color(0,0,0),10,1);
   }
 }
