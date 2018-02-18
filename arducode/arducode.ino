@@ -3,9 +3,10 @@
 #define NUMSTRIPS 3
 
 int pins[NUMSTRIPS]={6,9,10};
-int lengths[NUMSTRIPS]={72,130,146};
+int lengths[NUMSTRIPS]={72,25,146};
 Adafruit_NeoPixel strips[NUMSTRIPS];
 Adafruit_NeoPixel strip;
+int centerValues[NUMSTRIPS];
 int integerValue=0;
 char incomingByte;
 char incomingchar;
@@ -155,9 +156,9 @@ void center_vis(int selected_strip, int integerValue){
   }
 }
 
-void JD_funct2(int selected_strip, int integerValue, int tmp){
-  int center_val =strips[selected_strip].numPixels()/2;  
-  int move =map(integerValue, 1, 70, 1, strips[selected_strip].numPixels());// integerValue/2;
+void rainbow_vis(int selected_strip, int integerValue, int tmp){ //if values get too high this crashes
+  int center_val = centerValues[selected_strip];  
+  int move = map(integerValue, 1, 100, 1, centerValues[selected_strip]);//strips[selected_strip].numPixels());// integerValue/2;
   int start, end_, back = 0;
 
   start = center_val;
@@ -178,7 +179,7 @@ void JD_funct2(int selected_strip, int integerValue, int tmp){
   return;
 }
 
-void JD_funct3(int selected_strip, int integerValue, int tmp){
+void JD_funct3(int selected_strip, int integerValue, int tmp){////if values get too high this crashes
   int center_val =strips[selected_strip].numPixels()/2;  
   int move =map(integerValue, 1, 70, 1, strips[selected_strip].numPixels());// integerValue/2;
   
@@ -196,18 +197,10 @@ void JD_funct3(int selected_strip, int integerValue, int tmp){
 
   start = 0;
   end_ = move;
-  // back = 0;
   rainbowCycle_for_audio(50, selected_strip, start, end_, back, tmp);
-  // for(int i=0; i<move; i++){ //set remaining lights from left end to black
-  //   strips[selected_strip].setPixelColor(i,0,0,255);
-  // }
   start = move;
   end_ = center_val-move;
-  // back = 0;
   rainbowCycle_for_audio(50, selected_strip, start, end_, back, tmp);
-  // for(int i=move; i<center_val-move; i++){ //set lights up to numPixels() to black
-  //   strips[selected_strip].setPixelColor(i,0,0,0);
-  // }
   for(int i=move; i< center_val-move; i++){ //select lights from center towards numPixels()
     strips[selected_strip].setPixelColor(i,0,0,0);
   }
@@ -248,6 +241,7 @@ void clear_all(int numstrip){
 // Slightly different, this makes the rainbow equally distributed throughout
 void rainbowCycle_for_button(uint8_t wait, int j) {
   uint16_t i;
+  int j=0;
 
   // for(j=0; j<256*5; j++) { // 5 cycles of all colors on wheel
     for(i=0; i< 300; i++) {
@@ -267,8 +261,9 @@ void rainbowCycle_for_button(uint8_t wait, int j) {
 
 void setup() {
   Serial.begin(9600);
-  for(int i=0; i<NUMSTRIPS; i++){ //initialize all strips and set to black
+  for(int i=0; i<NUMSTRIPS; i++){ //initialize all strips and set to black, initialize center value array
     strips[i]=Adafruit_NeoPixel(lengths[i], pins[i], NEO_GRB + NEO_KHZ800);
+    centerValues[i]=strips[i].numPixels()/2;
     strips[i].begin(); //starts strip
     strips[i].show(); //sets strip to blank
   }
@@ -289,14 +284,14 @@ void loop() {
     }
   }
   else if(incomingchar=='c'){ //works as expected exits does not exit to default for some reason
-    weatherfunct(input,1);
-    weatherfunct(input,0);
-    weatherfunct(input,2);
+    for(int i=0;i<NUMSTRIPS;i++){
+      weatherfunct(input,i);
+    }
   }
   else if(incomingchar=='d'){
-    JD_funct2(2,input, tmp);
-    JD_funct2(1,input, tmp);
-    JD_funct2(0,input, tmp); //only jds strip
+    rainbow_vis(2,input, tmp);
+    rainbow_vis(1,input, tmp);
+    rainbow_vis(0,input, tmp); //only jds strip
     ++tmp;
     if(tmp==256*5) {tmp=0;}
   }
