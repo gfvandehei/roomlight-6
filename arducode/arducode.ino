@@ -241,7 +241,6 @@ void clear_all(int numstrip){
 // Slightly different, this makes the rainbow equally distributed throughout
 void rainbowCycle_for_button(uint8_t wait, int j) {
   uint16_t i;
-  int j=0;
 
   // for(j=0; j<256*5; j++) { // 5 cycles of all colors on wheel
     for(i=0; i< 300; i++) {
