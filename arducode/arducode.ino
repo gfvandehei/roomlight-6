@@ -1,25 +1,38 @@
 #include <Adafruit_NeoPixel.h>
 
-
-#define PIN 9
-#define PIN_2 10
-#define PIN_3 6
-#define NUMPIX 72
-#define NUMPIX2 130
-#define NUMPIX3 146
-
 #define NUMSTRIPS 3
 
-Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUMPIX, PIN, NEO_GRB + NEO_KHZ800); //initialize behind the bar lights
-Adafruit_NeoPixel strip2 = Adafruit_NeoPixel(NUMPIX2, PIN_2, NEO_GRB + NEO_KHZ800); // initialize under bed light
-Adafruit_NeoPixel strip3 = Adafruit_NeoPixel(NUMPIX3, PIN_3, NEO_GRB + NEO_KHZ800); // initialize jds nigga its lit
-Adafruit_NeoPixel strips[NUMSTRIPS]={strip,strip2,strip3}; //an array which contains both of the strips
-int striplen[NUMSTRIPS]={NUMPIX,NUMPIX2,NUMPIX3};
-int numpix=0;
+int pins[NUMSTRIPS]={6,9,10};
+int lengths[NUMSTRIPS]={72,130,146};
+Adafruit_NeoPixel strips[NUMSTRIPS];
+Adafruit_NeoPixel strip;
 int integerValue=0;
 char incomingByte;
 char incomingchar;
-int gabe = 0; //sets if JD or gabes stuff should be used 
+
+
+int SerialRead(){
+  /*
+  Reads the serial input and stores the data in an easily accessable way
+  */
+  if(Serial.available()){
+    integerValue = 0;         // throw away previous integerValue
+    while(1) {            // force into a loop until 'n' is received
+      incomingByte = Serial.read();
+      if(isAlpha(incomingByte) && incomingByte!='\n'){
+        incomingchar=incomingByte;
+      }
+      else{
+        if (incomingByte == '\n') break;   // exit the while(1), we're done receiving
+        if (incomingByte == -1) continue;  // if no characters are in the buffer read() returns -1
+        integerValue *= 10;  // shift left 1 decimal place
+        // convert ASCII to integer, add, and shift left 1 decimal place
+        integerValue = ((incomingByte - 48) + integerValue);
+      }
+    }
+    return integerValue;
+  }   
+}
 
 void colorWipe(uint32_t c, uint8_t wait, int strip_num) {
   for(uint16_t i=0; i<strips[strip_num].numPixels(); i++) {
@@ -35,14 +48,14 @@ void colorWipe(uint32_t c, uint8_t wait, int strip_num) {
 uint32_t Wheel(byte WheelPos) {
   WheelPos = 255 - WheelPos;
   if(WheelPos < 85) {
-    return strip.Color(255 - WheelPos * 3, 0, WheelPos * 3);
+    return strips[0].Color(255 - WheelPos * 3, 0, WheelPos * 3);
   }
   if(WheelPos < 170) {
     WheelPos -= 85;
-    return strip.Color(0, WheelPos * 3, 255 - WheelPos * 3);
+    return strips[0].Color(0, WheelPos * 3, 255 - WheelPos * 3);
   }
   WheelPos -= 170;
-  return strip.Color(WheelPos * 3, 255 - WheelPos * 3, 0);
+  return strips[0].Color(WheelPos * 3, 255 - WheelPos * 3, 0);
 }
 
 void rainbowCycle_for_audio(uint8_t wait,int selected_strip, int start, int end_, int back, int j) {
@@ -107,30 +120,7 @@ void weatherfunct(int weathercode, int stripnum){
   }
 }
 
-int SerialRead(){
-  /*
-  Reads the serial input and stores the data in an easily accessable way
-  */
-  if(Serial.available()){
-    integerValue = 0;         // throw away previous integerValue
-    while(1) {            // force into a loop until 'n' is received
-      incomingByte = Serial.read();
-      if(isAlpha(incomingByte) && incomingByte!='\n'){
-        incomingchar=incomingByte;
-      }
-      else{
-        if (incomingByte == '\n') break;   // exit the while(1), we're done receiving
-        if (incomingByte == -1) continue;  // if no characters are in the buffer read() returns -1
-        integerValue *= 10;  // shift left 1 decimal place
-        // convert ASCII to integer, add, and shift left 1 decimal place
-        integerValue = ((incomingByte - 48) + integerValue);
-      }
-    }
-    return integerValue;
-  }   
-}
-
-void JD_funct(int selected_strip, int integerValue){
+void center_vis(int selected_strip, int integerValue){
   int center_val =strips[selected_strip].numPixels()/2;  
   int move =map(integerValue, 1, 70, 1, strips[selected_strip].numPixels());// integerValue/2;
   if(selected_strip==9){ 
@@ -273,39 +263,32 @@ void rainbowCycle_for_button(uint8_t wait, int j) {
   // }
 }
 
-// Input a value 0 to 255 to get a color value.
-// The colours are a transition r - g - b - back to r.
 
 
 void setup() {
   Serial.begin(9600);
-  colorWipe(strip.Color(255,0,0),10,1);
-  for(int i=0; i<NUMSTRIPS; i++){ //loop begins and erases all strips
+  for(int i=0; i<NUMSTRIPS; i++){ //initialize all strips and set to black
+    strips[i]=Adafruit_NeoPixel(lengths[i], pins[i], NEO_GRB + NEO_KHZ800);
     strips[i].begin(); //starts strip
     strips[i].show(); //sets strip to blank
   }
+  strip=strips[0];
 }
 
 int tmp =0;
 void loop() {
   int input=SerialRead();
-  if(incomingchar=='a'){
-    /*for(int i=0;i<NUMSTRIPS;i++){
-      single_side_vis(strips[i],input);
-    }*/
-    single_side_vis(0,input);
-    single_side_vis(1,input);
-    single_side_vis(2,input);
-  }
-  else if(incomingchar=='b'){
+  if(incomingchar=='a'){ //Works as expected, exits as expected
     for(int i=0;i<NUMSTRIPS;i++){
-      JD_funct(i,input);
+      single_side_vis(i,input);
     }
-    //JD_funct(1,input);
-    
-    //JD_funct(2,input);//only jds strip
   }
-  else if(incomingchar=='c'){
+  else if(incomingchar=='b'){ //Works as expected, exits as expected
+    for(int i=0;i<NUMSTRIPS;i++){
+      center_vis(i,input);
+    }
+  }
+  else if(incomingchar=='c'){ //works as expected exits does not exit to default for some reason
     weatherfunct(input,1);
     weatherfunct(input,0);
     weatherfunct(input,2);
@@ -331,7 +314,11 @@ void loop() {
     if(tmp==256*5) {tmp=0;}
   }
   else{
-    colorWipe(strip.Color(255,0,0),10,1);
-    colorWipe(strip.Color(0,0,0),10,1);
+    for(int i=0;i<NUMSTRIPS;i++){
+      colorWipe(strips[i].Color(255,0,0),10,1);
+    }
+    for(int i=0;i<NUMSTRIPS;i++){
+      colorWipe(strips[i].Color(0,0,0),10,1);
+    }
   }
 }
